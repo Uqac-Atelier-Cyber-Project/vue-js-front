@@ -8,7 +8,10 @@
           <input type="password" v-model="confirmPassword" placeholder="Confirmer le mot de passe" required />
           <button type="submit">S'inscrire</button>
         </form>
-        <button class="back-btn" @click="goBack">Retour à la connexion</button>
+        <p>
+          Vous avez déjà un compte ?
+          <router-link to="/">Connectez-vous</router-link>
+        </p>
       </div>
     </div>
   </template>
@@ -16,11 +19,13 @@
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+
   
   const email = ref('');
   const password = ref('');
   const confirmPassword = ref('');
-  const router = useRouter();
   
   const register = () => {
     if (password.value !== confirmPassword.value) {
@@ -28,10 +33,7 @@
       return;
     }
     console.log('Inscription avec', email.value);
-  };
-  
-  const goBack = () => {
-    router.push('/');
+    router.push('/home');
   };
   </script>
   
@@ -48,22 +50,22 @@
     justify-content: center;
     align-items: center;
     height: 98vh;
-    background: linear-gradient(135deg, #fff, #ddd); /* Dégradé blanc */
+    background: linear-gradient(-135deg, #000, #272727); /* Même fond que la page de connexion */
   }
   
   /* Carte d'inscription */
   .card {
-    background: #000;
+    background: #fff;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
     text-align: center;
     width: 400px;
   }
   
   h2 {
     margin-bottom: 20px;
-    color: #fff;
+    color: #000;
   }
   
   /* Champs de saisie */
@@ -71,23 +73,17 @@
     width: 100%;
     padding: 12px;
     margin: 10px 0;
-    border: 2px solid #fff;
+    border: 2px solid #000;
     border-radius: 6px;
     font-size: 16px;
-    background: transparent;
-    color: #fff;
-  }
-  
-  input::placeholder {
-    color: #ccc;
   }
   
   /* Bouton principal */
   button {
     width: 100%;
     padding: 12px;
-    background: #fff;
-    color: #000;
+    background: #000;
+    color: #fff;
     font-size: 16px;
     font-weight: bold;
     border: none;
@@ -97,20 +93,22 @@
   }
   
   button:hover {
-    background: #ddd;
+    background: #444;
   }
   
-  /* Bouton retour */
-  .back-btn {
-    background: transparent;
-    border: 2px solid #fff;
-    color: #fff;
-    margin-top: 10px;
+  /* Lien vers la connexion */
+  p {
+    margin-top: 15px;
   }
   
-  .back-btn:hover {
-    background: #fff;
+  router-link {
     color: #000;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  router-link:hover {
+    text-decoration: underline;
   }
   </style>
   

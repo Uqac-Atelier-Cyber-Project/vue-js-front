@@ -17,12 +17,17 @@
   
   <script setup>
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter();
+
   
   const email = ref('');
   const password = ref('');
   
   const login = () => {
     console.log('Tentative de connexion avec', email.value, password.value);
+    router.push('/home');
   };
   </script>
   
