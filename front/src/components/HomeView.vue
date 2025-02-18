@@ -61,7 +61,7 @@ const logout = () => {
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 98vh;
     /* Utiliser toute la hauteur de la vue */
     background: linear-gradient(135deg, #ffffff, #bebebe);
     /* Dégradé blanc plus subtil */

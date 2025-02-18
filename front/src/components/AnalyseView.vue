@@ -16,7 +16,7 @@
         <div class="content">
             <div v-for="(option, index) in options" :key="index" class="option">
                 <label>
-                    <input type="checkbox" v-model="selectedOptions" :value="option.name" />
+                    <input type="checkbox" v-model="selectedOptions" :value="option.name" class="option-txt"/>
                     {{ option.label }}
                 </label>
                 <div v-if="selectedOptions.includes(option.name)" class="details">
@@ -135,6 +135,10 @@ export default {
     cursor: pointer;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
     transition: transform 0.3s, background 0.3s;
+}
+
+.option-txt {
+    margin-right: 15px; /* Espace entre la case à cocher et le texte */
 }
 
 .option:hover {
