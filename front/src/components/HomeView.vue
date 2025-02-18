@@ -1,145 +1,185 @@
 <template>
     <div class="container">
-      <!-- Barre de navigation -->
-      <nav class="navbar">
-        <div class="logo">🖥️ OPIB</div>
-        <div class="icons">
-          <span class="icon">🔔</span>
-          <span class="icon">👤</span>
-          <button @click="logout" class="logout-btn">Déconnexion</button>
+        <!-- Barre de navigation -->
+        <nav class="navbar">
+            <div class="logo">
+                <img src="../assets/logo.png" alt="Logo" class="logo-img" />
+            </div>
+            <div class="icons">
+                <button @click="logout" class="logout-btn">
+                    <img src="../assets/deco.png" alt="Logo" class="logout-btn-img" />
+                </button>
+                <span class="icon">🔔</span>
+                <span class="icon">👤</span>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <div class="content">
+            <div class="card" @click="goToAnalyse">
+                <span class="icon">🔍</span>
+                <p>Analyse</p>
+            </div>
+            <div class="card" @click="goToReportHistory">
+                <span class="icon">📄</span>
+                <p>Report History</p>
+            </div>
         </div>
-      </nav>
-  
-      <!-- Contenu principal -->
-      <div class="content">
-        <div class="card" @click="goToAnalyse">
-          <span class="icon">🔍</span>
-          <p>Analyse</p>
-        </div>
-        <div class="card" @click="goToReportHistory">
-          <span class="icon">📄</span>
-          <p>Report History</p>
-        </div>
-      </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { useRouter } from 'vue-router';
-  
-  const router = useRouter();
-  
-  const goToAnalyse = () => {
+</template>
+
+
+<script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goToAnalyse = () => {
     console.log('Redirection vers Analyse');
     router.push('/analyse');
-  };
-  
-  const goToReportHistory = () => {
+};
+
+const goToReportHistory = () => {
     console.log('Redirection vers Report History');
-    // router.push('/report-history');
-  };
-  
-  const logout = () => {
+    router.push('/history');
+};
+
+const logout = () => {
     console.log('Déconnexion');
-    router.push('/'); // Remplacez '/' par le chemin de votre page d'accueil
-  };
-  </script>
-  
-  <style scoped>
-  /* Styles généraux */
-  * {
+    router.push('/');
+};
+</script>
+
+<style scoped>
+/* Styles généraux */
+* {
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
-  }
-  
-  /* Conteneur principal */
-  .container {
+}
+
+/* Conteneur principal */
+.container {
     display: flex;
     flex-direction: column;
-    height: 98vh;
-    background: linear-gradient(135deg, #fff, #f0f0f0); /* Dégradé blanc */
-  }
-  
-  /* Barre de navigation */
-  .navbar {
+    height: 100vh;
+    /* Utiliser toute la hauteur de la vue */
+    background: linear-gradient(135deg, #ffffff, #bebebe);
+    /* Dégradé blanc plus subtil */
+}
+
+/* Barre de navigation */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    border-bottom: 2px solid #000;
+    padding: 15px 30px;
+    /* Plus d'espace pour la barre de navigation */
+    border-bottom: 3px solid #ccc;
+    /* Bordure plus épaisse */
     background: #fff;
-  }
-  
-  .logo {
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-  }
-  
-  .icons {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Ombre légère */
+}
+
+.logo {
     display: flex;
-    gap: 15px;
     align-items: center;
-  }
-  
-  .icon {
-    font-size: 22px;
-    cursor: pointer;
-    color: #000;
-  }
-  
-  .logout-btn {
-    background: #000;
-    color: #fff;
+}
+
+.logo-img {
+    height: 60px;
+    /* Ajustez la hauteur selon vos besoins */
+    width: auto;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    background: none;
     border: none;
-    border-radius: 6px;
-    padding: 10px 20px;
     cursor: pointer;
-    transition: 0.3s;
-  }
-  
-  .logout-btn:hover {
-    background: #333;
-  }
-  
-  /* Contenu principal */
-  .content {
+}
+
+.logout-btn:hover {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.logout-btn-img {
+    height: 40px;
+    /* Ajustez la hauteur selon vos besoins */
+    width: auto;
+}
+
+.icons {
+    display: flex;
+    gap: 20px;
+    /* Plus d'espace entre les icônes */
+    align-items: center;
+}
+
+.icon {
+    font-size: 34px;
+    /* Icônes plus grandes */
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.icon:hover {
+    color: #000;
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+
+/* Contenu principal */
+.content {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 50px;
-    padding: 40px;
-  }
-  
-  /* Cartes */
-  .card {
-    width: 250px;
-    height: 250px;
-    background: #000;
+    gap: 60px;
+    /* Plus d'espace entre les cartes */
+    padding: 60px;
+    /* Plus de padding pour le contenu */
+}
+
+/* Cartes */
+.card {
+    width: 300px;
+    /* Cartes plus larges */
+    height: 300px;
+    /* Cartes plus hautes */
+    background: #333;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 12px;
+    border-radius: 15px;
+    /* Coins plus arrondis */
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
-  }
-  
-  .card:hover {
-    background: #333;
-  }
-  
-  .card .icon {
-    font-size: 50px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    /* Ombre plus prononcée */
+    transition: transform 0.3s, background 0.3s;
+}
+
+.card:hover {
+    background: #444;
+    transform: scale(1.05);
+    /* Effet de zoom */
+}
+
+.card .icon {
+    font-size: 60px;
+    /* Icônes des cartes plus grandes */
     color: #fff;
-  }
-  
-  p {
-    font-size: 18px;
-    margin-top: 10px;
+}
+
+p {
+    font-size: 22px;
+    /* Texte des cartes plus grand */
+    margin-top: 15px;
     color: #fff;
-  }
-  </style>
-  
+}
+</style>
