@@ -10,7 +10,7 @@
                     <img src="../assets/deco.png" alt="Logo" class="logout-btn-img" />
                 </button>
                 <span class="icon">🔔</span>
-                <span class="icon">👤</span>
+                <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
 
@@ -48,6 +48,12 @@ const logout = () => {
     console.log('Déconnexion');
     router.push('/');
 };
+
+const profile = () => {
+    console.log('Profile');
+    router.push('/profile');
+};
+
 </script>
 
 <style scoped>
@@ -72,7 +78,7 @@ const logout = () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
+    padding: 15px 25px;
     /* Plus d'espace pour la barre de navigation */
     border-bottom: 3px solid #ccc;
     /* Bordure plus épaisse */
@@ -87,7 +93,7 @@ const logout = () => {
 }
 
 .logo-img {
-    height: 60px;
+    height: 50px;
     /* Ajustez la hauteur selon vos besoins */
     width: auto;
 }
@@ -122,7 +128,7 @@ const logout = () => {
     font-size: 34px;
     /* Icônes plus grandes */
     cursor: pointer;
-    color: #333;
+    color: #252525;
     transition: color 0.3s;
 }
 
@@ -151,7 +157,7 @@ const logout = () => {
     /* Cartes plus larges */
     height: 300px;
     /* Cartes plus hautes */
-    background: #333;
+    background: #252525;
     display: flex;
     flex-direction: column;
     justify-content: center;

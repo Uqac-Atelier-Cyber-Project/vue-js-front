@@ -8,7 +8,7 @@
             <div class="icons">
                 <span @click="goBack" class="icon">↩️</span>
                 <span class="icon">🔔</span>
-                <span class="icon">👤</span>
+                <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
 
@@ -51,6 +51,9 @@ export default {
         },
         goBack() {
             this.$router.push('/home'); // Remplacez '/page1' par le chemin de votre première page
+        },
+        profile() {
+            this.$router.push('/profile');
         }
     }
 };
@@ -76,7 +79,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px; /* Plus d'espace pour la barre de navigation */
+    padding: 15px 25px; /* Plus d'espace pour la barre de navigation */
     border-bottom: 3px solid #ccc; /* Bordure plus épaisse */
     background: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
@@ -88,7 +91,7 @@ export default {
 }
 
 .logo-img {
-    height: 60px; /* Ajustez la hauteur selon vos besoins */
+    height: 50px; /* Ajustez la hauteur selon vos besoins */
     width: auto;
 }
 
@@ -101,7 +104,7 @@ export default {
 .icon {
     font-size: 34px; /* Icônes plus grandes */
     cursor: pointer;
-    color: #333;
+    color: #252525;
     transition: color 0.3s;
 }
 
@@ -125,7 +128,7 @@ export default {
 /* Options */
 .option {
     width: 400px; /* Éléments plus larges */
-    background: #333;
+    background: #252525;
     color: #fff;
     padding: 30px; /* Plus de padding */
     border-radius: 15px; /* Coins plus arrondis */
@@ -217,7 +220,7 @@ export default {
 .btn {
     width: 200px; /* Bouton plus large */
     padding: 20px 40px; /* Plus de padding */
-    background: #333;
+    background: #252525;
     color: #fff;
     font-size: 24px; /* Augmenter la taille de la police du bouton */
     font-weight: bold;

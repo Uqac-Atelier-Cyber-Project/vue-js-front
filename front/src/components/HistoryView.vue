@@ -8,35 +8,65 @@
             <div class="icons">
                 <span @click="goBack" class="icon">↩️</span>
                 <span class="icon">🔔</span>
-                <span class="icon">👤</span>
+                <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
 
         <!-- Contenu principal -->
         <div class="content">
-            <!-- Historique d'analyse -->
+            <!-- Sidebar : Liste des rapports -->
             <div class="history">
-                <div v-for="(report, index) in reports" :key="index" class="report-item"
-                    @click="openReport(report.pdfUrl)">
-                    <p>{{ report.title }}</p>
-                </div>
+                <h2>Historique des rapports</h2>
+                <ul>
+                    <li v-for="(rapport, index) in rapports" :key="index" @click="selectRapport(rapport)"
+                        :class="{ active: selectedRapport === rapport }">
+                        {{ rapport }}
+                    </li>
+                </ul>
             </div>
 
-            <!-- Affichage du PDF -->
+            <!-- PDF Viewer -->
             <div class="pdf-viewer">
-                <canvas ref="pdfCanvas"></canvas>
+                <iframe v-if="selectedRapport" :src="pdfPath" width="100%" height="100%"></iframe>
+                <p v-else>Veuillez sélectionner un rapport</p>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-export default {
-    methods: {
-        goBack() {
-            this.$router.push('/home');
-        }
-    }
+<script setup>
+import { ref } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+// Liste des rapports disponibles
+const rapports = ref([
+    "Questions.pdf",
+    "RIB EL NAGGAR Sofiane.pdf",
+    "25_02_2025.pdf",
+]);
+
+// Rapport actuellement sélectionné
+const selectedRapport = ref(null);
+
+// Chemin vers le PDF affiché
+const pdfPath = ref("");
+
+// Fonction pour sélectionner un rapport
+const selectRapport = (rapport) => {
+    selectedRapport.value = rapport;
+    pdfPath.value = `/pdf/${rapport}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+};
+
+// Fonction pour revenir en arrière
+const goBack = () => {
+    router.push('/home'); // Remplacez '/home' par le chemin de votre page d'accueil
+};
+
+const profile = () => {
+    console.log('Profile');
+    router.push('/profile');
 };
 </script>
 
@@ -51,8 +81,11 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
-    height: 98vh; /* Utiliser toute la hauteur de la vue */
-    background: linear-gradient(135deg, #ffffff, #bebebe); /* Dégradé blanc plus subtil */
+    min-height: 98vh;
+    height: 100%;
+    /* Utiliser toute la hauteur de la vue */
+    background: linear-gradient(135deg, #ffffff, #bebebe);
+    /* Dégradé blanc plus subtil */
 }
 
 /* Barre de navigation */
@@ -60,10 +93,13 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px; /* Plus d'espace pour la barre de navigation */
-    border-bottom: 3px solid #ccc; /* Bordure plus épaisse */
+    padding: 15px 25px;
+    /* Plus d'espace pour la barre de navigation */
+    border-bottom: 3px solid #ccc;
+    /* Bordure plus épaisse */
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Ombre légère */
 }
 
 .logo {
@@ -72,68 +108,97 @@ export default {
 }
 
 .logo-img {
-    height: 60px; /* Ajustez la hauteur selon vos besoins */
+    height: 50px;
+    /* Ajustez la hauteur selon vos besoins */
     width: auto;
 }
 
 .icons {
     display: flex;
-    gap: 20px; /* Plus d'espace entre les icônes */
+    gap: 20px;
+    /* Plus d'espace entre les icônes */
     align-items: center;
 }
 
 .icon {
-    font-size: 34px; /* Icônes plus grandes */
+    font-size: 34px;
+    /* Icônes plus grandes */
     cursor: pointer;
     color: #333;
     transition: color 0.3s;
 }
 
 .icon:hover {
-    color: #000; 
+    color: #000;
     opacity: 0.7;
-    transform: scale(1.05);
 }
 
 /* Contenu principal */
 .content {
     flex: 1;
     display: flex;
-    padding: 40px; /* Plus de padding pour le contenu */
+    padding: 20px;
+    /* Plus de padding pour le contenu */
 }
 
-/* Historique d'analyse */
+/* Sidebar : Liste des rapports */
 .history {
-    width: 30%;
+    width: 25%;
     background: #fff;
-    border-right: 3px solid #ccc; /* Bordure plus épaisse */
-    padding: 30px; /* Plus de padding */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée */
+    border-right: 3px solid #ccc;
+    /* Bordure plus épaisse */
+    padding: 30px;
+    /* Plus de padding */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    /* Ombre plus prononcée */
+    overflow-y: auto;
 }
 
-.report-item {
-    padding: 15px; /* Plus de padding */
-    border-bottom: 2px solid #f0f0f0; /* Bordure plus épaisse */
+.history h2 {
+    text-align: center;
+    font-size: 24px;
+    /* Augmenter la taille de la police */
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+}
+
+.history li {
+    padding: 15px;
+    /* Plus de padding */
     cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
+    border-bottom: 2px solid #f0f0f0;
+    /* Bordure plus épaisse */
+    font-size: 20px;
+    /* Augmenter la taille de la police */
+    transition: background 0.3s;
 }
 
-.report-item:hover {
-    background: #f0f0f0;
-    transform: scale(1.02); /* Effet de zoom */
+.history li:hover,
+.history .active {
+    background: #ddd;
 }
 
-/* Affichage du PDF */
+/* PDF Viewer */
 .pdf-viewer {
     flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    padding: 40px; /* Plus de padding */
+    padding: 20px;
+    background: #f9f9f9;
+    border-left: 3px solid #ccc;
+    /* Bordure plus épaisse */
 }
 
-canvas {
-    border: 2px solid #333; /* Bordure plus épaisse */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Ombre pour le canvas */
+.pdf-viewer h2 {
+    font-size: 24px;
+    /* Augmenter la taille de la police */
+}
+
+.pdf-viewer iframe {
+    border: none;
 }
 </style>
