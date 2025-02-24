@@ -9,7 +9,10 @@
                 <button @click="logout" class="logout-btn">
                     <img src="../assets/deco.png" alt="Logo" class="logout-btn-img" />
                 </button>
-                <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
+                <div class="notification-wrapper">
+                    <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
+                    <span v-if="notifications.length" class="notification-badge">{{ notifications.length }}</span>
+                </div>
                 <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
@@ -77,7 +80,6 @@ const profile = () => {
     router.push('/profile');
 };
 </script>
-
 
 
 <style scoped>
@@ -164,6 +166,22 @@ const profile = () => {
     transform: scale(1.05);
 }
 
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 /* Notifications */
 .notifications {
     position: absolute;
@@ -246,3 +264,4 @@ p {
     color: #fff;
 }
 </style>
+

@@ -7,7 +7,10 @@
             </div>
             <div class="icons">
                 <span @click="goBack" class="icon">↩️</span>
-                <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
+                <div class="notification-wrapper">
+                    <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
+                    <span v-if="notifications.length" class="notification-badge">{{ notifications.length }}</span>
+                </div>
                 <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
@@ -138,6 +141,22 @@ export default {
     color: #000;
     opacity: 0.7;
     transform: scale(1.05);
+}
+
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 0 5px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 /* Notifications */
@@ -294,4 +313,3 @@ export default {
     transform: scale(1.05); /* Effet de zoom */
 }
 </style>
-

@@ -16,26 +16,59 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+<script>
+export default {
+  name: 'RegisterComponent',
+  data() {
+    return {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      userID: '',
+      api_url: process.env.VUE_APP_API_URL
+    };
+  },
+  methods: {
+    async register() {
+      try {
+        if (this.password !== this.confirmPassword) {
+          alert('Les mots de passe ne correspondent pas');
+          return;
+        }
 
-const router = useRouter();
+        console.log('Inscription en cours...');
+        console.log(this.email);
 
+        /*const response = await fetch(`${this.api_url}/users/signup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: this.email,
+            password: this.password
+          })
+        });
 
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
+        const data = await response.json();
 
-const register = () => {
-  if (password.value !== confirmPassword.value) {
-    alert('Les mots de passe ne correspondent pas');
-    return;
+        if (!response.ok) {
+          alert(`Erreur : ${data.message || 'Une erreur est survenue'}`);
+          throw new Error(data.message || 'Une erreur est survenue');
+        }
+
+        this.userID = data.userId;
+        console.log('Inscription réussie:', data);*/
+        this.$router.push({ path: '/home', query: { userID: this.userID } });
+      } catch (error) {
+        alert(`Erreur : ${error.message}`);
+        console.error('Erreur lors de l\'inscription:', error.message);
+      }
+    }
   }
-  console.log('Inscription avec', email.value);
-  router.push('/home');
 };
 </script>
+
 
 <style scoped>
 /* Styles généraux */

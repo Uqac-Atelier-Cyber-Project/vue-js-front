@@ -15,21 +15,55 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+<script>
+export default {
+  name: 'LoginComponent',
+  data() {
+    return {
+      email: '',
+      password: '',
+      userID: '',
+      loginError: "Mail ou mot de passe incorrect",
+      api_url: process.env.VUE_APP_API_URL
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        console.log('Tentative de connexion...');
+        console.log(this.email);
 
-const router = useRouter();
+        /*const response = await fetch(`${this.api_url}/users/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: this.email,
+            password: this.password
+          })
+        });
 
+        const data = await response.json();
 
-const email = ref('');
-const password = ref('');
+        if (!response.ok) {
+          alert(`Erreur : ${data.message || 'Identifiants incorrects'}`);
+          throw new Error(data.message || 'Identifiants incorrects');
+        }
 
-const login = () => {
-  console.log('Tentative de connexion avec', email.value, password.value);
-  router.push('/home');
+        this.userID = data.userId;
+        console.log('Connexion réussie:', data);*/
+        this.$router.push({ path: '/home', query: { userID: this.userID } });
+      } catch (error) {
+        alert(`Erreur : ${error.message}`);
+        console.error('Erreur lors de la connexion:', error.message);
+      }
+    }
+  }
 };
 </script>
+
+
 
 <style scoped>
 /* Styles généraux */
