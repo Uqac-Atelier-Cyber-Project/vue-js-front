@@ -6,11 +6,21 @@
                 <img src="../assets/logo.png" alt="Logo" class="logo-img" />
             </div>
             <div class="icons">
+                <button @click="logout" class="logout-btn">
+                    <img src="../assets/deco.png" alt="Logo" class="logout-btn-img" />
+                </button>
+                <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
                 <span @click="goBack" class="icon">↩️</span>
-                <span class="icon">🔔</span>
-                <button @click="logout" class="logout-btn">Déconnexion</button>
             </div>
         </nav>
+
+        <!-- Notifications -->
+        <div v-if="showNotifications" class="notifications">
+            <div v-for="(notification, index) in notifications" :key="index" class="notification-item"
+                @click="handleNotificationClick(index)">
+                {{ notification }}
+            </div>
+        </div>
 
         <!-- Contenu principal -->
         <div class="content">
@@ -51,6 +61,12 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+const showNotifications = ref(false);
+const notifications = ref([
+    "Notification 1: Votre rapport a été généré.",
+    "Notification 2: Une nouvelle mise à jour est disponible."
+]);
+
 const user = ref({
     email: 'user@example.com',
     password: ''
@@ -70,6 +86,17 @@ const connectionHistory = ref([
     { date: '2023-08-20', time: '17:30', device: 'Edge for Windows' },
     { date: '2023-08-15', time: '13:20', device: 'Chrome for Windows' }
 ]);
+
+const toggleNotifications = () => {
+    showNotifications.value = !showNotifications.value;
+};
+
+const handleNotificationClick = (index) => {
+    // Supprimer la notification cliquée
+    notifications.value.splice(index, 1);
+    // Rediriger vers page1
+    router.push('/page1');
+};
 
 const updateProfile = () => {
     if (user.value.password !== confirmPassword.value) {
@@ -111,6 +138,8 @@ const goBack = () => {
     /* Utiliser toute la hauteur de la vue */
     background: linear-gradient(135deg, #ffffff, #bebebe);
     /* Dégradé blanc plus subtil */
+    position: relative;
+    /* Pour positionner les notifications */
 }
 
 /* Barre de navigation */
@@ -138,6 +167,25 @@ const goBack = () => {
     width: auto;
 }
 
+.logout-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.logout-btn-img {
+    height: 40px;
+    /* Ajustez la hauteur selon vos besoins */
+    width: auto;
+}
+
 .icons {
     display: flex;
     gap: 20px;
@@ -158,21 +206,37 @@ const goBack = () => {
     opacity: 0.7;
 }
 
-.logout-btn {
-    background: #252525;
-    color: #fff;
-    border: none;
+/* Notifications */
+.notifications {
+    position: absolute;
+    top: 75px;
+    /* Ajustez selon la hauteur de votre barre de navigation */
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
     border-radius: 8px;
-    /* Coins plus arrondis */
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 10px;
 }
 
-.logout-btn:hover {
-    background: #444;
-    transform: scale(1.05);
-    /* Effet de zoom */
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.notification-item:hover {
+    background: #f0f0f0;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
 }
 
 /* Contenu principal */
