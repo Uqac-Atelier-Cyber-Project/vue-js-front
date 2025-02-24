@@ -45,8 +45,6 @@
     </div>
 </template>
 
-
-
 <script setup>
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
@@ -101,7 +99,6 @@ const handleNotificationClick = () => {
     router.push('/history');
 };
 </script>
-
 
 <style scoped>
 /* Styles généraux */
@@ -286,4 +283,3 @@ const handleNotificationClick = () => {
     border: none;
 }
 </style>
-

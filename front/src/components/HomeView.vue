@@ -39,7 +39,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -80,7 +79,6 @@ const profile = () => {
     router.push('/profile');
 };
 </script>
-
 
 <style scoped>
 /* Styles généraux */
@@ -264,4 +262,3 @@ p {
     color: #fff;
 }
 </style>
-

@@ -53,7 +53,7 @@ export default {
 
         this.userID = data.userId;
         console.log('Connexion réussie:', data);*/
-        this.$router.push({ path: '/home', query: { userID: this.userID } });
+        this.$router.push({ path: '/home', query: { userID: this.userID, mail: this.mail /* Je ne sais pas encore si on se passe le mail ou l'ID*/ } });
       } catch (error) {
         alert(`Erreur : ${error.message}`);
         console.error('Erreur lors de la connexion:', error.message);
@@ -62,8 +62,6 @@ export default {
   }
 };
 </script>
-
-
 
 <style scoped>
 /* Styles généraux */

@@ -57,8 +57,6 @@
     </div>
 </template>
 
-
-
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -121,7 +119,6 @@ const goBack = () => {
     router.push('/home'); // Remplacez '/home' par le chemin de votre page d'accueil
 };
 </script>
-
 
 <style scoped>
 /* Styles généraux */
@@ -333,4 +330,3 @@ const goBack = () => {
     font-size: 18px;
 }
 </style>
-
