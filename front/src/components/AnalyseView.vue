@@ -7,10 +7,22 @@
             </div>
             <div class="icons">
                 <span @click="goBack" class="icon">↩️</span>
-                <span class="icon">🔔</span>
+                <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
                 <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
+
+        <!-- Notifications -->
+        <div v-if="showNotifications" class="notifications">
+            <div
+                v-for="(notification, index) in notifications"
+                :key="index"
+                class="notification-item"
+                @click="handleNotificationClick(index)"
+            >
+                {{ notification }}
+            </div>
+        </div>
 
         <!-- Contenu principal -->
         <div class="content">
@@ -31,6 +43,7 @@
     </div>
 </template>
 
+
 <script>
 export default {
     data() {
@@ -41,7 +54,12 @@ export default {
                 { name: 'scanPort', label: 'Scan de port', ip: '', port: '' },
                 { name: 'detectionCVE', label: 'Détection CVE', ip: '', port: '' }
             ],
-            selectedOptions: []
+            selectedOptions: [],
+            showNotifications: false,
+            notifications: [
+                "Notification 1: Votre rapport a été généré.",
+                "Notification 2: Une nouvelle mise à jour est disponible."
+            ]
         };
     },
     methods: {
@@ -50,14 +68,21 @@ export default {
             console.log('Données envoyées:', selectedData);
         },
         goBack() {
-            this.$router.push('/home'); // Remplacez '/page1' par le chemin de votre première page
+            this.$router.push('/home'); // Remplacez '/home' par le chemin de votre première page
         },
         profile() {
             this.$router.push('/profile');
+        },
+        toggleNotifications() {
+            this.showNotifications = !this.showNotifications;
+        },
+        handleNotificationClick() {
+            this.$router.push('/history');
         }
     }
 };
 </script>
+
 
 <style scoped>
 /* Styles généraux */
@@ -72,6 +97,7 @@ export default {
     flex-direction: column;
     height: 98vh; /* Utiliser toute la hauteur de la vue */
     background: linear-gradient(135deg, #ffffff, #bebebe); /* Dégradé blanc plus subtil */
+    position: relative; /* Pour positionner les notifications */
 }
 
 /* Barre de navigation */
@@ -112,6 +138,38 @@ export default {
     color: #000;
     opacity: 0.7;
     transform: scale(1.05);
+}
+
+/* Notifications */
+.notifications {
+    position: absolute;
+    top: 75px; /* Ajustez selon la hauteur de votre barre de navigation */
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.notification-item:hover {
+    background: #f0f0f0;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
 }
 
 /* Contenu principal */
@@ -236,3 +294,4 @@ export default {
     transform: scale(1.05); /* Effet de zoom */
 }
 </style>
+

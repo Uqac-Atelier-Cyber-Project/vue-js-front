@@ -91,11 +91,8 @@ const toggleNotifications = () => {
     showNotifications.value = !showNotifications.value;
 };
 
-const handleNotificationClick = (index) => {
-    // Supprimer la notification cliquée
-    notifications.value.splice(index, 1);
-    // Rediriger vers page1
-    router.push('/page1');
+const handleNotificationClick = () => {
+    router.push('/history');
 };
 
 const updateProfile = () => {

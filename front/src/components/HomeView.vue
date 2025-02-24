@@ -188,6 +188,10 @@ const profile = () => {
     cursor: pointer;
 }
 
+.notification-item:hover {
+    background: #f0f0f0;
+}
+
 .notification-item:last-child {
     border-bottom: none;
 }
