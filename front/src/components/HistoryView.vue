@@ -43,7 +43,6 @@ const router = useRouter();
 // Liste des rapports disponibles
 const rapports = ref([
     "Questions.pdf",
-    "RIB EL NAGGAR Sofiane.pdf",
     "25_02_2025.pdf",
 ]);
 
