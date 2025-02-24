@@ -9,10 +9,18 @@
                 <button @click="logout" class="logout-btn">
                     <img src="../assets/deco.png" alt="Logo" class="logout-btn-img" />
                 </button>
-                <span class="icon">🔔</span>
+                <span @click="toggleNotifications" class="icon notification-icon">🔔</span>
                 <span @click="profile" class="icon">👤</span>
             </div>
         </nav>
+
+        <!-- Notifications -->
+        <div v-if="showNotifications" class="notifications">
+            <div v-for="(notification, index) in notifications" :key="index" class="notification-item"
+                @click="handleNotificationClick(index)">
+                {{ notification }}
+            </div>
+        </div>
 
         <!-- Contenu principal -->
         <div class="content">
@@ -30,9 +38,24 @@
 
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
+const showNotifications = ref(false);
+const notifications = ref([
+    "Notification 1: Votre rapport a été généré.",
+    "Notification 2: Une nouvelle mise à jour est disponible."
+]);
+
+const toggleNotifications = () => {
+    showNotifications.value = !showNotifications.value;
+};
+
+const handleNotificationClick = () => {
+    router.push('/history');
+};
 
 const goToAnalyse = () => {
     console.log('Redirection vers Analyse');
@@ -53,8 +76,9 @@ const profile = () => {
     console.log('Profile');
     router.push('/profile');
 };
-
 </script>
+
+
 
 <style scoped>
 /* Styles généraux */
@@ -71,6 +95,8 @@ const profile = () => {
     /* Utiliser toute la hauteur de la vue */
     background: linear-gradient(135deg, #ffffff, #bebebe);
     /* Dégradé blanc plus subtil */
+    position: relative;
+    /* Pour positionner les notifications */
 }
 
 /* Barre de navigation */
@@ -138,6 +164,33 @@ const profile = () => {
     transform: scale(1.05);
 }
 
+/* Notifications */
+.notifications {
+    position: absolute;
+    top: 75px;
+    /* Ajustez selon la hauteur de votre barre de navigation */
+    right: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
 
 /* Contenu principal */
 .content {
