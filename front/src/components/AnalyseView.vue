@@ -44,6 +44,7 @@
 
 <script>
 export default {
+    name: 'AnalyseComponent',
     data() {
         return {
             userID: this.$route.query.userID,
@@ -135,7 +136,7 @@ export default {
         },
         profile() {
             console.log('Profile');
-            this.$router.push({path:'/profile', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/profile', query: { userID: this.userID, notification: this.notifications } });
         },
         toggleNotifications() {
             this.showNotifications = !this.showNotifications;

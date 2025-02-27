@@ -144,7 +144,7 @@ export default {
             ];
         },
 
-        formatConnection(connection){
+        formatConnection(connection) {
             return `Connexion le ${connection.date} à ${connection.time} via ${connection.device}.`;
         },
 
@@ -166,7 +166,7 @@ export default {
                 console.error('Erreur lors de la récupération des données utilisateur:', error);
             }
         },*/
-       
+
         // Simuler la récupération des données utilisateur
         fetchUserData() { this.user.email = 'mail@exemple.com'; },
 
@@ -200,7 +200,7 @@ export default {
         toggleNotifications() {
             this.showNotifications = !this.showNotifications;
         },
-        
+
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
             this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });

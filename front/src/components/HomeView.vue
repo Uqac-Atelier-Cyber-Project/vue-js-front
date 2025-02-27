@@ -94,23 +94,23 @@ export default {
         },
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
-            this.$router.push({path:'/history', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
         },
         goToAnalyse() {
             console.log('Redirection vers Analyse');
-            this.$router.push({path:'/analyse', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/analyse', query: { userID: this.userID, notification: this.notifications } });
         },
         goToReportHistory() {
             console.log('Redirection vers Report History');
-            this.$router.push({path:'/history', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
         },
         logout() {
             console.log('Déconnexion');
-            this.$router.push({path:'/'});
+            this.$router.push({ path: '/' });
         },
         profile() {
             console.log('Profile');
-            this.$router.push({path:'/profile', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/profile', query: { userID: this.userID, notification: this.notifications } });
         }
     }
 };

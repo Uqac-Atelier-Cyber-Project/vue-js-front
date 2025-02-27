@@ -47,7 +47,7 @@
 
 <script>
 export default {
-    name: 'ReportComponent',
+    name: 'HistoryComponent',
     data() {
         return {
             userID: this.$route.query.userID,
@@ -148,14 +148,14 @@ export default {
                 console.error('Erreur lors de l\'envoi de la notification de lecture:', error);
             }
         },
-        
+
         goBack() {
             console.log('Home');
             this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
         },
         profile() {
             console.log('Profile');
-            this.$router.push({path:'/profile', query: { userID: this.userID, notification: this.notifications }});
+            this.$router.push({ path: '/profile', query: { userID: this.userID, notification: this.notifications } });
         },
         handleNotificationClick() {
             console.log('Supprimer la notification');
