@@ -57,68 +57,166 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+<script>
+export default {
+    name: 'ProfileComponent',
+    data() {
+        return {
+            userID: this.$route.query.userID,
+            showNotifications: false,
+            notifications: this.$route.query.notification || [],
+            user: {
+                email: '',
+                password: ''
+            },
+            confirmPassword: '',
+            connectionHistory: [],
+            intervalId: null,
+            api_url: process.env.VUE_APP_API_URL
+        };
+    },
+    mounted() {
+        // Démarrer la vérification périodique des notifications
+        this.startNotificationCheck();
+        // Récupérer l'historique de connexion et l'email du client au montage du composant
+        this.fetchConnectionHistory();
+        this.fetchUserData();
+    },
+    beforeUnmount() {
+        // Arrêter la vérification périodique lorsque le composant est détruit
+        this.stopNotificationCheck();
+    },
+    methods: {
+        /*async fetchNotifications() {
+            try {
+                const response = await fetch(`${this.api_url}/notifications`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.notifications = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
+        },*/
+        //Simuler la récupération des notifications
+        fetchNotifications() {
+            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        },
 
-const router = useRouter();
+        startNotificationCheck() {
+            this.intervalId = setInterval(this.fetchNotifications, 5000);
+        },
+        stopNotificationCheck() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        },
 
-const showNotifications = ref(false);
-const notifications = ref([
-    "Notification 1: Votre rapport a été généré.",
-    "Notification 2: Une nouvelle mise à jour est disponible."
-]);
 
-const user = ref({
-    email: 'user@example.com',
-    password: ''
-});
+        // Récupération de l'historique de connexion
+        /*async fetchConnectionHistory() {
+            try {
+                const response = await fetch(`${this.api_url}/connection-history`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.connectionHistory = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération de l\'historique de connexion:', error);
+            }
+        },*/
+        // Simuler la récupération de l'historique de connexion
+        fetchConnectionHistory() {
+            this.connectionHistory = [
+                { date: '2023-10-01', time: '14:30', device: 'Firefox for Linux' },
+                { date: '2023-09-25', time: '10:15', device: 'Chrome for Android' },
+                { date: '2023-09-20', time: '08:45', device: 'Safari for iOS' }
+            ];
+        },
 
-const confirmPassword = ref('');
+        formatConnection(connection){
+            return `Connexion le ${connection.date} à ${connection.time} via ${connection.device}.`;
+        },
 
-const connectionHistory = ref([
-    { date: '2023-10-01', time: '14:30', device: 'Firefox for Linux' },
-    { date: '2023-09-25', time: '10:15', device: 'Chrome for Android' },
-    { date: '2023-09-20', time: '08:45', device: 'Safari for iOS' },
-    { date: '2023-09-15', time: '16:20', device: 'Edge for Windows' },
-    { date: '2023-09-10', time: '12:00', device: 'Chrome for Windows' },
-    { date: '2023-09-05', time: '09:30', device: 'Firefox for Linux' },
-    { date: '2023-08-30', time: '15:10', device: 'Chrome for Android' },
-    { date: '2023-08-25', time: '11:45', device: 'Safari for iOS' },
-    { date: '2023-08-20', time: '17:30', device: 'Edge for Windows' },
-    { date: '2023-08-15', time: '13:20', device: 'Chrome for Windows' }
-]);
 
-const toggleNotifications = () => {
-    showNotifications.value = !showNotifications.value;
-};
+        // Récupération du mail de l'utilisateur
+        /*async fetchUserData() {
+            try {
+                const response = await fetch(`${this.api_url}/user-data`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.user.email = data.email;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données utilisateur:', error);
+            }
+        },*/
+       
+        // Simuler la récupération des données utilisateur
+        fetchUserData() { this.user.email = 'mail@exemple.com'; },
 
-const handleNotificationClick = () => {
-    router.push('/history');
-};
+        // Update des données d'utilisateur
+        async updateProfile() {
+            if (this.user.password !== this.confirmPassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+            try {
+                const response = await fetch(`${this.api_url}/update-profile`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: this.user.email,
+                        password: this.user.password
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || 'Erreur lors de la mise à jour du profil');
+                }
+                console.log('Profil mis à jour:', data);
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour du profil:', error);
+            }
+        },
 
-const updateProfile = () => {
-    if (user.value.password !== confirmPassword.value) {
-        alert("Les mots de passe ne correspondent pas.");
-        return;
+        toggleNotifications() {
+            this.showNotifications = !this.showNotifications;
+        },
+        
+        handleNotificationClick() {
+            console.log('Redirection vers History via Notification');
+            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
+        },
+        logout() {
+            console.log('Déconnexion');
+            this.$router.push('/');
+        },
+        goBack() {
+            console.log('Home');
+            this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
+        }
     }
-    console.log('Profil mis à jour:', user.value);
-    // Ajoutez ici la logique pour mettre à jour le profil dans votre backend
-};
-
-const formatConnection = (connection) => {
-    return `Connexion le ${connection.date} à ${connection.time} via ${connection.device}.`;
-};
-
-const logout = () => {
-    console.log('Déconnexion');
-    router.push('/'); // Remplacez '/' par le chemin de votre page d'accueil
-};
-
-const goBack = () => {
-    router.push('/home'); // Remplacez '/home' par le chemin de votre page d'accueil
 };
 </script>
+
 
 <style scoped>
 /* Styles généraux */

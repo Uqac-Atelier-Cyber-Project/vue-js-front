@@ -45,58 +45,122 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from "vue";
-import { useRouter } from 'vue-router';
+<script>
+export default {
+    name: 'ReportComponent',
+    data() {
+        return {
+            userID: this.$route.query.userID,
+            rapports: [],
+            selectedRapport: null,
+            pdfPath: "",
+            notifications: this.$route.query.notification || [],
+            showNotifications: false,
+            intervalId: null,
+            api_url: process.env.VUE_APP_API_URL
+        };
+    },
+    mounted() {
+        // Démarrer la vérification périodique des notifications
+        this.startNotificationCheck();
+        // Récupérer la liste des rapports PDF au montage du composant
+        this.fetchRapports();
+    },
+    beforeUnmount() {
+        // Arrêter la vérification périodique lorsque le composant est détruit
+        this.stopNotificationCheck();
+    },
+    methods: {
+        /*async fetchRapports() {
+            try {
+                const response = await fetch(`${this.api_url}/rapports`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.rapports = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des rapports:', error);
+            }
+        },*/
 
-const router = useRouter();
+        //Simuler la récupération des rapports
+        fetchRapports() {
+            this.rapports = ["Questions.pdf", "25_02_2025.pdf",];
+        },
 
-// Liste des rapports disponibles
-const rapports = ref([
-    "Questions.pdf",
-    "25_02_2025.pdf",
-]);
 
-// Rapport actuellement sélectionné
-const selectedRapport = ref(null);
+        /*async fetchNotifications() {
+            try {
+                const response = await fetch(`${this.api_url}/notifications`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.notifications = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
+        },*/
 
-// Chemin vers le PDF affiché
-const pdfPath = ref("");
+        //Simuler la récupération des notifications
+        fetchNotifications() {
+            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        },
 
-// Liste des notifications
-const notifications = ref([
-    "Notification 1: Votre rapport a été généré.",
-    "Notification 2: Une nouvelle mise à jour est disponible."
-]);
+        startNotificationCheck() {
+            this.intervalId = setInterval(this.fetchNotifications, 5000);
+        },
+        stopNotificationCheck() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        },
+        toggleNotifications() {
+            this.showNotifications = !this.showNotifications;
+        },
 
-// Variable pour contrôler l'affichage des notifications
-const showNotifications = ref(false);
+        async selectRapport(rapport) {
+            this.selectedRapport = rapport;
+            this.pdfPath = `/pdf/${rapport}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
 
-// Fonction pour sélectionner un rapport
-const selectRapport = (rapport) => {
-    selectedRapport.value = rapport;
-    pdfPath.value = `/pdf/${rapport}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
-};
-
-// Fonction pour revenir en arrière
-const goBack = () => {
-    router.push('/home'); // Remplacez '/home' par le chemin de votre page d'accueil
-};
-
-const profile = () => {
-    console.log('Profile');
-    router.push('/profile');
-};
-
-// Fonction pour basculer l'affichage des notifications
-const toggleNotifications = () => {
-    showNotifications.value = !showNotifications.value;
-};
-
-// Fonction pour gérer le clic sur une notification
-const handleNotificationClick = () => {
-    console.log('Supprimer la notification');
-    router.push('/history');
+            // Envoyer une notification au serveur indiquant que le PDF a été lu
+            try {
+                await fetch(`${this.api_url}/report-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID,
+                        report: rapport
+                    })
+                });
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi de la notification de lecture:', error);
+            }
+        },
+        
+        goBack() {
+            console.log('Home');
+            this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
+        },
+        profile() {
+            console.log('Profile');
+            this.$router.push({path:'/profile', query: { userID: this.userID, notification: this.notifications }});
+        },
+        handleNotificationClick() {
+            console.log('Supprimer la notification');
+        }
+    }
 };
 </script>
 

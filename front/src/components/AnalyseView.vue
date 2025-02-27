@@ -46,6 +46,7 @@
 export default {
     data() {
         return {
+            userID: this.$route.query.userID,
             options: [
                 { name: 'bruteForceWifi', label: 'Brute Force Wifi', ip: '', port: '' },
                 { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '', port: '' },
@@ -54,28 +55,94 @@ export default {
             ],
             selectedOptions: [],
             showNotifications: false,
-            notifications: [
-                "Notification 1: Votre rapport a été généré.",
-                "Notification 2: Une nouvelle mise à jour est disponible."
-            ]
+            notifications: this.$route.query.notification || [],
+            intervalId: null,
+            api_url: process.env.VUE_APP_API_URL
         };
     },
+    mounted() {
+        // Démarrer la vérification périodique des notifications
+        this.startNotificationCheck();
+    },
+    beforeUnmount() {
+        // Arrêter la vérification périodique lorsque le composant est détruit
+        this.stopNotificationCheck();
+    },
     methods: {
-        submit() {
-            const selectedData = this.options.filter(opt => this.selectedOptions.includes(opt.name));
+        /*async fetchNotifications() {
+            try {
+                const response = await fetch(`${this.api_url}/notifications`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.notifications = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
+        },*/
+
+        // Simuler la récupération des notifications
+        fetchNotifications() {
+            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        },
+
+        startNotificationCheck() {
+            this.intervalId = setInterval(this.fetchNotifications, 30000); // Vérifie toutes les 30 secondes
+        },
+        stopNotificationCheck() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        },
+
+        async submit() {
+            const selectedData = this.options
+                .filter(opt => this.selectedOptions.includes(opt.name))
+                .map(opt => ({
+                    name: opt.name,
+                    ip: opt.ip,
+                    port: opt.port
+                }));
+
             console.log('Données envoyées:', selectedData);
+
+            try {
+                const response = await fetch(`${this.api_url}/submit-options`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(selectedData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'envoi des options sélectionnées');
+                }
+
+                console.log('Options envoyées avec succès');
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi des options sélectionnées:', error);
+            }
         },
         goBack() {
-            this.$router.push('/home'); // Remplacez '/home' par le chemin de votre première page
+            console.log('Home');
+            this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
         },
         profile() {
-            this.$router.push('/profile');
+            console.log('Profile');
+            this.$router.push({path:'/profile', query: { userID: this.userID, notification: this.notifications }});
         },
         toggleNotifications() {
             this.showNotifications = !this.showNotifications;
         },
         handleNotificationClick() {
-            this.$router.push('/history');
+            console.log('Redirection vers History via Notification');
+            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
         }
     }
 };
