@@ -118,7 +118,10 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(selectedData)
+                    body: JSON.stringify({
+                        userID: this.userID,
+                        data : selectedData
+                    })
                 });
 
                 if (!response.ok) {

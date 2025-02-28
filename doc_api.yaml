@@ -1,5 +1,5 @@
 # Description: Documentation de l'API pour OPIB.
-# copier coller sur https://editor.swagger.io/ pour visualiser la documentation
+# Copier-coller sur https://editor.swagger.io/ pour visualiser la documentation
 
 openapi: 3.0.0
 info:
@@ -11,9 +11,9 @@ servers:
     description: Serveur local
 
 paths:
-  /user/login:
+  /login:
     post:
-      summary: connection
+      summary: Connexion
       requestBody:
         required: true
         content:
@@ -23,17 +23,24 @@ paths:
               properties:
                 email:
                   type: string
-                hash_passwd_b64:
+                password:
                   type: string
       responses:
         "200":
           description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
         "401":
           description: Connexion échouée
 
-  /user/signup:
+  /register:
     post:
-      summary: inscription
+      summary: Inscription
       requestBody:
         required: true
         content:
@@ -43,17 +50,33 @@ paths:
               properties:
                 email:
                   type: string
-                hash_passwd_b64:
+                password:
                   type: string
       responses:
         "200":
           description: Inscription réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
         "401":
           description: Inscription échouée
+        "409":
+          description: Email déjà pris
 
-  /notifications :
+  /notifications:
     get:
       summary: Récupérer les notifications
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
       responses:
         "200":
           description: Récupération réussie
@@ -62,13 +85,23 @@ paths:
               schema:
                 type: object
                 properties:
-                  # TODO add les trucs renvoyés par la bdd
+                  notifications:
+                    type: array
+                    items:
+                      type: string
         "401":
           description: Récupération échouée
 
-  /rapports :
+  /rapports:
     get:
       summary: Récupérer les rapports
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
       responses:
         "200":
           description: Récupération réussie
@@ -77,13 +110,41 @@ paths:
               schema:
                 type: object
                 properties:
-                  # TODO add les trucs renvoyés par la bdd
+                  rapports:
+                    type: array
+                    items:
+                      type: object
         "401":
-          description: Récupération échouée 
+          description: Récupération échouée
 
-  /connection-history :
+  /report-read:
+    post:
+      summary: Marquer un rapport comme lu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                report:
+                  type: object
+      responses:
+        "200":
+          description: Rapport marqué comme lu
+
+  /connection-history:
     get:
       summary: Récupérer l'historique de connexion
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
       responses:
         "200":
           description: Récupération réussie
@@ -92,13 +153,30 @@ paths:
               schema:
                 type: object
                 properties:
-                  # TODO add les trucs renvoyés par la bdd
+                  connectionHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        time:
+                          type: string
+                        device:
+                          type: string
         "401":
           description: Récupération échouée
 
-  /user-data :
+  /user-data:
     get:
       summary: Récupérer les données de l'utilisateur
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
       responses:
         "200":
           description: Récupération réussie
@@ -107,6 +185,43 @@ paths:
               schema:
                 type: object
                 properties:
-                  # TODO add les trucs renvoyés par la bdd
+                  email:
+                    type: string
         "401":
           description: Récupération échouée
+
+  /update-profile:
+    post:
+      summary: Mettre à jour le profil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Profil mis à jour
+
+  /submit-options:
+    post:
+      summary: Soumettre des options pour l'analyse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                data:
+                  type: object
+      responses:
+        "200":
+          description: Options soumises avec succès
