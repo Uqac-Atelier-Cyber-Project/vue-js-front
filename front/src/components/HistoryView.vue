@@ -74,6 +74,7 @@ export default {
         /*async fetchRapports() {
             try {
                 const response = await fetch(`${this.api_url}/rapports`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -97,6 +98,7 @@ export default {
         /*async fetchNotifications() {
             try {
                 const response = await fetch(`${this.api_url}/notifications`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     },
