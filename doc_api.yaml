@@ -1,0 +1,112 @@
+# Description: Documentation de l'API pour OPIB.
+# copier coller sur https://editor.swagger.io/ pour visualiser la documentation
+
+openapi: 3.0.0
+info:
+  title: API Documentation
+  description: Documentation de l'API pour OPIB.
+  version: 1.0.1
+servers:
+  - url: http://localhost:8000/api
+    description: Serveur local
+
+paths:
+  /user/login:
+    post:
+      summary: connection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                hash_passwd_b64:
+                  type: string
+      responses:
+        "200":
+          description: Connexion réussie
+        "401":
+          description: Connexion échouée
+
+  /user/signup:
+    post:
+      summary: inscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                hash_passwd_b64:
+                  type: string
+      responses:
+        "200":
+          description: Inscription réussie
+        "401":
+          description: Inscription échouée
+
+  /notifications :
+    get:
+      summary: Récupérer les notifications
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # TODO add les trucs renvoyés par la bdd
+        "401":
+          description: Récupération échouée
+
+  /rapports :
+    get:
+      summary: Récupérer les rapports
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # TODO add les trucs renvoyés par la bdd
+        "401":
+          description: Récupération échouée 
+
+  /connection-history :
+    get:
+      summary: Récupérer l'historique de connexion
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # TODO add les trucs renvoyés par la bdd
+        "401":
+          description: Récupération échouée
+
+  /user-data :
+    get:
+      summary: Récupérer les données de l'utilisateur
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  # TODO add les trucs renvoyés par la bdd
+        "401":
+          description: Récupération échouée
