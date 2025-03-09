@@ -52,6 +52,7 @@ export default {
         };
     },
     mounted() {
+        this.fetchNotifications();
         // Démarrer la vérification périodique des notifications
         this.startNotificationCheck();
     },
@@ -95,15 +96,15 @@ export default {
         },
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
-            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
         },
         goToAnalyse() {
             console.log('Redirection vers Analyse');
-            this.$router.push({ path: '/analyse', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/analyse', query: { userID: this.userID } });
         },
         goToReportHistory() {
             console.log('Redirection vers Report History');
-            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
         },
         logout() {
             console.log('Déconnexion');
@@ -111,7 +112,7 @@ export default {
         },
         profile() {
             console.log('Profile');
-            this.$router.push({ path: '/profile', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/profile', query: { userID: this.userID } });
         }
     }
 };

@@ -64,7 +64,7 @@ export default {
         return {
             userID: this.$route.query.userID,
             showNotifications: false,
-            notifications: this.$route.query.notification || [],
+            notifications: this.notification || [],
             user: {
                 email: '',
                 password: ''
@@ -76,6 +76,7 @@ export default {
         };
     },
     mounted() {
+        this.fetchNotifications();
         // Démarrer la vérification périodique des notifications
         this.startNotificationCheck();
         // Récupérer l'historique de connexion et l'email du client au montage du composant
@@ -206,7 +207,7 @@ export default {
 
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
-            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/history', query: { userID: this.userID} });
         },
         logout() {
             console.log('Déconnexion');
@@ -214,7 +215,7 @@ export default {
         },
         goBack() {
             console.log('Home');
-            this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/home', query: { userID: this.userID} });
         }
     }
 };

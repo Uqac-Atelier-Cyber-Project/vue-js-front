@@ -85,6 +85,7 @@ export default {
         };
     },
     mounted() {
+        this.fetchNotifications();
         this.startNotificationCheck();
     },
     beforeUnmount() {
@@ -143,18 +144,18 @@ export default {
         },
         goBack() {
             console.log('Home');
-            this.$router.push({ path: '/home', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/home', query: { userID: this.userID } });
         },
         profile() {
             console.log('Profile');
-            this.$router.push({ path: '/profile', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/profile', query: { userID: this.userID } });
         },
         toggleNotifications() {
             this.showNotifications = !this.showNotifications;
         },
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
-            this.$router.push({ path: '/history', query: { userID: this.userID, notification: this.notifications } });
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
         }
     }
 };
