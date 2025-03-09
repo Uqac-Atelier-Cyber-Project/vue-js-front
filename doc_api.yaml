@@ -1,6 +1,3 @@
-# Description: Documentation de l'API pour OPIB.
-# Copier-coller sur https://editor.swagger.io/ pour visualiser la documentation
-
 openapi: 3.0.0
 info:
   title: API Documentation
@@ -221,7 +218,20 @@ paths:
                 userId:
                   type: string
                 data:
-                  type: object
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      ip:
+                        type: string
+                      port:
+                        type: integer
+                password:
+                  type: string
       responses:
         "200":
           description: Options soumises avec succès
+        "401":
+          description: Soumission échouée
