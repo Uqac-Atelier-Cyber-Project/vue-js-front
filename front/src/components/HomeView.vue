@@ -39,46 +39,86 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const showNotifications = ref(false);
-const notifications = ref([
-    "Notification 1: Votre rapport a été généré.",
-    "Notification 2: Une nouvelle mise à jour est disponible."
-]);
-
-const toggleNotifications = () => {
-    showNotifications.value = !showNotifications.value;
-};
-
-const handleNotificationClick = () => {
-    router.push('/history');
-};
-
-const goToAnalyse = () => {
-    console.log('Redirection vers Analyse');
-    router.push('/analyse');
-};
-
-const goToReportHistory = () => {
-    console.log('Redirection vers Report History');
-    router.push('/history');
-};
-
-const logout = () => {
-    console.log('Déconnexion');
-    router.push('/');
-};
-
-const profile = () => {
-    console.log('Profile');
-    router.push('/profile');
+<script>
+export default {
+    name: 'HomeComponent',
+    data() {
+        return {
+            userID: this.$route.query.userID,
+            showNotifications: false,
+            notifications: this.$route.query.notification || [],
+            intervalId: null,
+            api_url: process.env.VUE_APP_API_URL
+        };
+    },
+    mounted() {
+        this.fetchNotifications();
+        // Démarrer la vérification périodique des notifications
+        this.startNotificationCheck();
+    },
+    beforeUnmount() {
+        // Arrêter la vérification périodique lorsque le composant est détruit
+        this.stopNotificationCheck();
+    },
+    methods: {
+        /*async fetchNotifications() {
+            try {
+                const response = await fetch(`${this.api_url}/notifications`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.notifications = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
+        },*/
+        // Simuler la récupération des notifications
+        fetchNotifications() {
+            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        },
+        startNotificationCheck() {
+            this.intervalId = setInterval(this.fetchNotifications, 5000); // Vérifie toutes les 5 secondes
+            console.log('Vérification des notifications démarrée');
+        },
+        stopNotificationCheck() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        },
+        toggleNotifications() {
+            this.showNotifications = !this.showNotifications;
+        },
+        handleNotificationClick() {
+            console.log('Redirection vers History via Notification');
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
+        },
+        goToAnalyse() {
+            console.log('Redirection vers Analyse');
+            this.$router.push({ path: '/analyse', query: { userID: this.userID } });
+        },
+        goToReportHistory() {
+            console.log('Redirection vers Report History');
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
+        },
+        logout() {
+            console.log('Déconnexion');
+            this.$router.push({ path: '/' });
+        },
+        profile() {
+            console.log('Profile');
+            this.$router.push({ path: '/profile', query: { userID: this.userID } });
+        }
+    }
 };
 </script>
+
+
 
 <style scoped>
 /* Styles généraux */

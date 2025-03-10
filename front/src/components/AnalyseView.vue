@@ -37,15 +37,37 @@
             </div>
         </div>
         <div class="button">
-            <button @click="submit" class="btn">OK</button>
+            <button @click="showPasswordPopup = true" class="btn">OK</button>
+        </div>
+
+        <!-- Pop-up pour le mot de passe -->
+        <div v-if="showPasswordPopup" class="popup-overlay">
+            <div class="popup">
+                <h2>Entrez votre mot de passe</h2>
+                <h4>Ce mot de passe sera celui de votre rapport</h4>
+                <label>
+                    Mot de passe :
+                    <input type="password" v-model="password" />
+                </label>
+                <label>
+                    Confirmation :
+                    <input type="password" v-model="confirmPassword" />
+                </label>
+                <div class="button-container">
+                    <button @click="sendData" class="btn-pop-up">OK</button>
+                    <button @click="showPasswordPopup = false" class="btn-pop-up">Annuler</button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 export default {
+    name: 'AnalyseComponent',
     data() {
         return {
+            userID: this.$route.query.userID,
             options: [
                 { name: 'bruteForceWifi', label: 'Brute Force Wifi', ip: '', port: '' },
                 { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '', port: '' },
@@ -54,28 +76,86 @@ export default {
             ],
             selectedOptions: [],
             showNotifications: false,
-            notifications: [
-                "Notification 1: Votre rapport a été généré.",
-                "Notification 2: Une nouvelle mise à jour est disponible."
-            ]
+            notifications: this.$route.query.notification || [],
+            intervalId: null,
+            api_url: process.env.VUE_APP_API_URL,
+            showPasswordPopup: false,
+            password: '',
+            confirmPassword: ''
         };
     },
+    mounted() {
+        this.fetchNotifications();
+        this.startNotificationCheck();
+    },
+    beforeUnmount() {
+        this.stopNotificationCheck();
+    },
     methods: {
-        submit() {
-            const selectedData = this.options.filter(opt => this.selectedOptions.includes(opt.name));
+        fetchNotifications() {
+            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        },
+        startNotificationCheck() {
+            this.intervalId = setInterval(this.fetchNotifications, 30000);
+        },
+        stopNotificationCheck() {
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+        },
+        async sendData() {
+            if (this.password !== this.confirmPassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+
+            const selectedData = this.options
+                .filter(opt => this.selectedOptions.includes(opt.name))
+                .map(opt => ({
+                    name: opt.name,
+                    ip: opt.ip,
+                    port: opt.port
+                }));
+
             console.log('Données envoyées:', selectedData);
+
+            try {
+                const response = await fetch(`${this.api_url}/submit-options`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: this.userID,
+                        data: selectedData,
+                        password: this.password
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'envoi des options sélectionnées');
+                }
+
+                console.log('Options envoyées avec succès');
+                this.showPasswordPopup = false;
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi des options sélectionnées:', error);
+            }
         },
         goBack() {
-            this.$router.push('/home'); // Remplacez '/home' par le chemin de votre première page
+            console.log('Home');
+            this.$router.push({ path: '/home', query: { userID: this.userID } });
         },
         profile() {
-            this.$router.push('/profile');
+            console.log('Profile');
+            this.$router.push({ path: '/profile', query: { userID: this.userID } });
         },
         toggleNotifications() {
             this.showNotifications = !this.showNotifications;
         },
         handleNotificationClick() {
-            this.$router.push('/history');
+            console.log('Redirection vers History via Notification');
+            this.$router.push({ path: '/history', query: { userID: this.userID } });
         }
     }
 };
@@ -93,11 +173,8 @@ export default {
     display: flex;
     flex-direction: column;
     height: 98vh;
-    /* Utiliser toute la hauteur de la vue */
     background: linear-gradient(135deg, #ffffff, #bebebe);
-    /* Dégradé blanc plus subtil */
     position: relative;
-    /* Pour positionner les notifications */
 }
 
 /* Barre de navigation */
@@ -106,12 +183,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 15px 25px;
-    /* Plus d'espace pour la barre de navigation */
     border-bottom: 3px solid #ccc;
-    /* Bordure plus épaisse */
     background: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Ombre légère */
 }
 
 .logo {
@@ -121,20 +195,17 @@ export default {
 
 .logo-img {
     height: 50px;
-    /* Ajustez la hauteur selon vos besoins */
     width: auto;
 }
 
 .icons {
     display: flex;
     gap: 20px;
-    /* Plus d'espace entre les icônes */
     align-items: center;
 }
 
 .icon {
     font-size: 34px;
-    /* Icônes plus grandes */
     cursor: pointer;
     color: #252525;
     transition: color 0.3s;
@@ -166,7 +237,6 @@ export default {
 .notifications {
     position: absolute;
     top: 75px;
-    /* Ajustez selon la hauteur de votre barre de navigation */
     right: 20px;
     background: #fff;
     border: 1px solid #ccc;
@@ -201,70 +271,51 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    /* Aligner les éléments au début */
     align-items: center;
     gap: 40px;
-    /* Plus d'espace entre les éléments */
     padding: 80px;
-    /* Plus de padding pour le contenu */
 }
 
 /* Options */
 .option {
     width: 400px;
-    /* Éléments plus larges */
     background: #252525;
     color: #fff;
     padding: 30px;
-    /* Plus de padding */
     border-radius: 15px;
-    /* Coins plus arrondis */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     cursor: pointer;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    /* Ombre plus prononcée */
     transition: transform 0.3s, background 0.3s;
 }
 
 .option-txt {
     margin-right: 15px;
-    /* Espace entre la case à cocher et le texte */
 }
 
 .option:hover {
     background: #444;
     transform: scale(1.05);
-    /* Effet de zoom */
 }
 
-/* Style des cases à cocher */
 .option input[type="checkbox"] {
     appearance: none;
-    /* Supprimer le style par défaut */
     width: 25px;
-    /* Taille plus grande */
     height: 25px;
     border: 3px solid #fff;
-    /* Bordure blanche */
     border-radius: 5px;
-    /* Coins arrondis */
     background: #555;
-    /* Couleur de fond */
     transition: background 0.3s, border 0.3s;
     cursor: pointer;
     margin-bottom: 10px;
-    /* Espace en dessous de la case à cocher */
     position: relative;
-    /* Ajout pour positionner la coche */
 }
 
 .option input[type="checkbox"]:checked {
     background: #007BFF;
-    /* Couleur de fond lorsque coché */
     border-color: #005BB5;
-    /* Couleur de la bordure lorsque coché */
 }
 
 .option input[type="checkbox"]::after {
@@ -283,17 +334,13 @@ export default {
 
 .option input[type="checkbox"]:checked::after {
     opacity: 1;
-    /* Afficher le signe de coche lorsque coché */
 }
 
 .option label {
     font-size: 24px;
-    /* Augmenter la taille de la police */
     margin-top: 10px;
-    /* Espace au-dessus du texte */
     display: flex;
     align-items: center;
-    /* Centrer verticalement le texte avec la case à cocher */
 }
 
 .details {
@@ -303,43 +350,32 @@ export default {
     color: #000;
     width: 100%;
     padding: 20px;
-    /* Plus de padding */
     border-radius: 15px;
     margin-top: 15px;
-    /* Plus d'espace au-dessus des détails */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    /* Ombre pour les détails */
 }
 
 .details label {
     font-size: 18px;
-    /* Taille de la police des étiquettes */
     margin-bottom: 10px;
-    /* Espace en dessous des étiquettes */
 }
 
 /* Bouton OK */
 .button {
     display: flex;
     justify-content: center;
-    /* Centrer le bouton horizontalement */
     align-items: center;
-    /* Centrer le bouton verticalement */
 }
 
 .btn {
     width: 200px;
-    /* Bouton plus large */
     padding: 20px 40px;
-    /* Plus de padding */
     background: #252525;
     color: #fff;
     font-size: 24px;
-    /* Augmenter la taille de la police du bouton */
     font-weight: bold;
     border: none;
     border-radius: 10px;
-    /* Coins plus arrondis */
     cursor: pointer;
     transition: background 0.3s, transform 0.3s;
     margin-bottom: 200px;
@@ -348,6 +384,73 @@ export default {
 .btn:hover {
     background: #444;
     transform: scale(1.05);
-    /* Effet de zoom */
 }
+
+/* Pop-up */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.popup {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.popup h2 {
+    margin-bottom: 20px;
+}
+
+.popup label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.popup input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Conteneur pour les boutons */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.btn-pop-up {
+    width: 200px;
+    padding: 20px 40px;
+    background: #252525;
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    margin-bottom: 25px;
+}
+
+.btn-pop-up:hover {
+    background: #444;
+    transform: scale(1.05);
+}
+
 </style>

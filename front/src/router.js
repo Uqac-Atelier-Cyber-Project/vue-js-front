@@ -7,12 +7,12 @@ import HistoryView from './components/HistoryView.vue';
 import Profile from './components/ProfileView.vue';
 
 const routes = [
-  { path: '/', component: LoginView },
-  { path: '/register', component: RegisterView },
-  { path: '/home', component: HomeView },
-  { path: '/analyse', component: AnalyseView },
-  { path: '/history', component: HistoryView },
-  { path: '/profile', component: Profile},
+  { path: '/', component: LoginView, props: true },
+  { path: '/register', component: RegisterView, props: true },
+  { path: '/home', component: HomeView, props: true },
+  { path: '/analyse', component: AnalyseView, props: true },
+  { path: '/history', component: HistoryView, props: true },
+  { path: '/profile', component: Profile, props: true},
 ];
 
 const router = createRouter({

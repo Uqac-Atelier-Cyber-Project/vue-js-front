@@ -1,0 +1,237 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  description: Documentation de l'API pour OPIB.
+  version: 1.0.1
+servers:
+  - url: http://localhost:8000/api
+    description: Serveur local
+
+paths:
+  /login:
+    post:
+      summary: Connexion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+        "401":
+          description: Connexion échouée
+
+  /register:
+    post:
+      summary: Inscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Inscription réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+        "401":
+          description: Inscription échouée
+        "409":
+          description: Email déjà pris
+
+  /notifications:
+    get:
+      summary: Récupérer les notifications
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      type: string
+        "401":
+          description: Récupération échouée
+
+  /rapports:
+    get:
+      summary: Récupérer les rapports
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rapports:
+                    type: array
+                    items:
+                      type: object
+        "401":
+          description: Récupération échouée
+
+  /report-read:
+    post:
+      summary: Marquer un rapport comme lu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                report:
+                  type: object
+      responses:
+        "200":
+          description: Rapport marqué comme lu
+
+  /connection-history:
+    get:
+      summary: Récupérer l'historique de connexion
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connectionHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                        time:
+                          type: string
+                        device:
+                          type: string
+        "401":
+          description: Récupération échouée
+
+  /user-data:
+    get:
+      summary: Récupérer les données de l'utilisateur
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: ID unique de l'utilisateur
+      responses:
+        "200":
+          description: Récupération réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+        "401":
+          description: Récupération échouée
+
+  /update-profile:
+    post:
+      summary: Mettre à jour le profil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Profil mis à jour
+
+  /submit-options:
+    post:
+      summary: Soumettre des options pour l'analyse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      ip:
+                        type: string
+                      port:
+                        type: integer
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Options soumises avec succès
+        "401":
+          description: Soumission échouée
