@@ -25,7 +25,7 @@ export default {
       password: '',
       confirmPassword: '',
       userID: '',
-      api_url: process.env.VUE_APP_API_URL
+      api_url: process.env.VUE_APP_API_URL || 'http://192.168.2.111:8081/'
     };
   },
   methods: {
@@ -39,7 +39,7 @@ export default {
         console.log('Inscription en cours...');
         console.log(this.email);
 
-        /*const response = await fetch(`${this.api_url}/users/signup`, {
+        const response = await fetch(`${this.api_url}/users/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -58,7 +58,7 @@ export default {
         }
 
         this.userID = data.userId;
-        console.log('Inscription réussie:', data);*/
+        console.log('Inscription réussie:', data);
         this.$router.push({ path: '/home', query: { userID: this.userID } });
       } catch (error) {
         alert(`Erreur : ${error.message}`);

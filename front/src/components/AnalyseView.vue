@@ -131,11 +131,6 @@ export default {
                         data.port = opt.port;
                     }
 
-                    // Ajoutez d'autres propriétés ici si nécessaire
-                    // if (opt.otherProperty !== undefined) {
-                    //     data.otherProperty = opt.otherProperty;
-                    // }
-
                     return data;
                 });
 

@@ -24,7 +24,7 @@ export default {
       password: '',
       userID: '',
       loginError: "Mail ou mot de passe incorrect",
-      api_url: process.env.VUE_APP_API_URL
+      api_url: process.env.VUE_APP_API_URL || 'http://192.168.2.111:8081/'
     };
   },
   methods: {
@@ -33,7 +33,7 @@ export default {
         console.log('Tentative de connexion...');
         console.log(this.email);
 
-        /*const response = await fetch(`${this.api_url}/users/login`, {
+        const response = await fetch(`${this.api_url}/users/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -52,7 +52,7 @@ export default {
         }
 
         this.userID = data.userId;
-        console.log('Connexion réussie:', data);*/
+        console.log('Connexion réussie:', data);
         this.$router.push({ path: '/home', query: { userID: this.userID } });
       } catch (error) {
         alert(`Erreur : ${error.message}`);
