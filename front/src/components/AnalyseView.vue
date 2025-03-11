@@ -31,8 +31,12 @@
                     {{ option.label }}
                 </label>
                 <div v-if="selectedOptions.includes(option.name)" class="details">
-                    <label>IP : <input type="text" v-model="option.ip" placeholder="Entrez l'IP" /></label>
-                    <label>Port : <input type="number" v-model="option.port" placeholder="Entrez le port" /></label>
+                    <label v-if="option.essid !== undefined">ESSID : <input type="text" v-model="option.essid"
+                            placeholder="Entrez l'ESSID" /></label>
+                    <label v-if="option.ip !== undefined">IP : <input type="text" v-model="option.ip"
+                            placeholder="Entrez l'IP" /></label>
+                    <label v-if="option.port !== undefined">Port : <input type="number" v-model="option.port"
+                            placeholder="Entrez le port" /></label>
                 </div>
             </div>
         </div>
@@ -62,6 +66,7 @@
     </div>
 </template>
 
+
 <script>
 export default {
     name: 'AnalyseComponent',
@@ -69,9 +74,9 @@ export default {
         return {
             userID: this.$route.query.userID,
             options: [
-                { name: 'bruteForceWifi', label: 'Brute Force Wifi', ip: '', port: '' },
-                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '', port: '' },
-                { name: 'scanPort', label: 'Scan de port', ip: '', port: '' },
+                { name: 'bruteForceWifi', label: 'Brute Force Wifi', essid: '' },
+                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '' },
+                { name: 'scanPort', label: 'Scan de port', ip: '' },
                 { name: 'detectionCVE', label: 'Détection CVE', ip: '', port: '' }
             ],
             selectedOptions: [],
@@ -111,16 +116,34 @@ export default {
 
             const selectedData = this.options
                 .filter(opt => this.selectedOptions.includes(opt.name))
-                .map(opt => ({
-                    name: opt.name,
-                    ip: opt.ip,
-                    port: opt.port
-                }));
+                .map(opt => {
+                    const data = { name: opt.name };
+
+                    if (opt.ip !== undefined) {
+                        data.ip = opt.ip;
+                    }
+
+                    if (opt.essid !== undefined) {
+                        data.essid = opt.essid;
+                    }
+
+                    if (opt.port !== undefined) {
+                        data.port = opt.port;
+                    }
+
+                    // Ajoutez d'autres propriétés ici si nécessaire
+                    // if (opt.otherProperty !== undefined) {
+                    //     data.otherProperty = opt.otherProperty;
+                    // }
+
+                    return data;
+                });
+
 
             console.log('Données envoyées:', selectedData);
 
             try {
-                const response = await fetch(`${this.api_url}/submit-options`, {
+                /*const response = await fetch(`${this.api_url}/submit-options`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -134,10 +157,11 @@ export default {
 
                 if (!response.ok) {
                     throw new Error('Erreur lors de l\'envoi des options sélectionnées');
-                }
+                }*/
 
                 console.log('Options envoyées avec succès');
                 this.showPasswordPopup = false;
+                this.goBack();
             } catch (error) {
                 console.error('Erreur lors de l\'envoi des options sélectionnées:', error);
             }
@@ -160,6 +184,7 @@ export default {
     }
 };
 </script>
+
 
 <style scoped>
 /* Styles généraux */
@@ -452,5 +477,4 @@ export default {
     background: #444;
     transform: scale(1.05);
 }
-
 </style>
