@@ -25,7 +25,7 @@ export default {
       password: '',
       confirmPassword: '',
       userID: '',
-      api_url: process.env.VUE_APP_API_URL || 'http://192.168.2.111:8081/'
+      api_url: ''
     };
   },
   methods: {
@@ -39,14 +39,23 @@ export default {
         console.log('Inscription en cours...');
         console.log(this.email);
 
-        const response = await fetch(`${this.api_url}/users/signup`, {
+        // Obtenir les informations du navigateur
+        const userAgent = navigator.userAgent;
+        const simplifiedBrowser = this.getSimplifiedBrowserInfo(userAgent);
+
+        // Obtenir la date et l'heure actuelles
+        const currentDateTime = new Date().toISOString();
+
+        const response = await fetch(`${this.api_url}/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             email: this.email,
-            password: this.password
+            password: this.password,
+            browser: simplifiedBrowser,
+            datetime: currentDateTime
           })
         });
 
@@ -64,6 +73,40 @@ export default {
         alert(`Erreur : ${error.message}`);
         console.error('Erreur lors de l\'inscription:', error.message);
       }
+    },
+    getSimplifiedBrowserInfo(userAgent) {
+      let browserName = 'Unknown';
+      let osName = 'Unknown';
+
+      if (userAgent.indexOf('Firefox') > -1) {
+        browserName = 'Firefox';
+      } else if (userAgent.indexOf('Chrome') > -1) {
+        browserName = 'Chrome';
+      } else if (userAgent.indexOf('Safari') > -1) {
+        browserName = 'Safari';
+      } else if (userAgent.indexOf('Opera') > -1 || userAgent.indexOf('OPR') > -1) {
+        browserName = 'Opera';
+      } else if (userAgent.indexOf('Trident') > -1) {
+        browserName = 'Internet Explorer';
+      } else if (userAgent.indexOf('Edg') > -1) {
+        browserName = 'Edge';
+      }
+
+      if (userAgent.indexOf('Windows NT 10.0') > -1) {
+        osName = 'Windows';
+      } else if (userAgent.indexOf('Windows NT 6.1') > -1) {
+        osName = 'Windows 7';
+      } else if (userAgent.indexOf('Mac OS X') > -1) {
+        osName = 'MacOS';
+      } else if (userAgent.indexOf('Linux') > -1) {
+        osName = 'Linux';
+      } else if (userAgent.indexOf('Android') > -1) {
+        osName = 'Android';
+      } else if (userAgent.indexOf('iPhone') > -1 || userAgent.indexOf('iPad') > -1) {
+        osName = 'iOS';
+      }
+
+      return `${browserName} for ${osName}`;
     }
   }
 };
