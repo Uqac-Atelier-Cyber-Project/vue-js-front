@@ -75,7 +75,7 @@ export default {
           throw new Error(data.message || 'Une erreur est survenue');
         }
 
-        this.userID = data.UUID;
+        this.userID = data.userId;
         console.log('Inscription réussie:', data);
         this.$router.push({ path: '/home', query: { userID: this.userID } });
       } catch (error) {

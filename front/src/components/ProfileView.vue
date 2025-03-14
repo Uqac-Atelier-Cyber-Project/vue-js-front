@@ -72,7 +72,7 @@ export default {
             confirmPassword: '',
             connectionHistory: [],
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL
+            api_url: 'http://192.168.2.111:8090'
         };
     },
     mounted() {
@@ -153,15 +153,15 @@ export default {
 
 
         // Récupération du mail de l'utilisateur
-        /*async fetchUserData() {
+        async fetchUserData() {
             try {
-                const response = await fetch(`${this.api_url}/user-data`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/auth/userData`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
@@ -169,10 +169,7 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des données utilisateur:', error);
             }
-        },*/
-
-        // Simuler la récupération des données utilisateur
-        fetchUserData() { this.user.email = 'mail@exemple.com'; },
+        },
 
         // Update des données d'utilisateur
         async updateProfile() {
@@ -181,12 +178,13 @@ export default {
                 return;
             }
             try {
-                const response = await fetch(`${this.api_url}/update-profile`, {
+                const response = await fetch(`${this.api_url}/auth/updateProfile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        userId: this.userID,
                         email: this.user.email,
                         password: this.user.password
                     })
