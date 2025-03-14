@@ -24,7 +24,7 @@ export default {
       password: '',
       userID: '',
       loginError: "Mail ou mot de passe incorrect",
-      api_url: '/'
+      api_url: 'http://192.168.2.111:8090'
     };
   },
   methods: {
@@ -42,7 +42,7 @@ export default {
 
         console.log("browser : " + simplifiedBrowser)
 
-        const response = await fetch(`${this.api_url}/login`, {
+        const response = await fetch(`${this.api_url}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -50,8 +50,9 @@ export default {
           body: JSON.stringify({
             email: this.email,
             password: this.password,
-            browser: simplifiedBrowser,
-            datetime: currentDateTime
+            platform: simplifiedBrowser,
+            login_time: currentDateTime,
+            location: "Canada"
           })
         });
 

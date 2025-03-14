@@ -25,9 +25,11 @@
 
         <!-- Contenu principal -->
         <div class="content">
-            <div v-for="(option, index) in options" :key="index" class="option">
+            <div v-for="(option, index) in options" :key="index" class="option"
+                :class="{ 'disabled-option': isOptionDisabled(option.name), 'grayed-out': isWifiOptionGrayedOut(option.name) }">
                 <label>
-                    <input type="checkbox" v-model="selectedOptions" :value="option.name" class="option-txt" />
+                    <input type="checkbox" v-model="selectedOptions" :value="option.name" class="option-txt"
+                        :disabled="isOptionDisabled(option.name)" @change="handleOptionChange(option.name)" />
                     {{ option.label }}
                 </label>
                 <div v-if="selectedOptions.includes(option.name)" class="details">
@@ -65,7 +67,6 @@
         </div>
     </div>
 </template>
-
 
 <script>
 export default {
@@ -134,7 +135,6 @@ export default {
                     return data;
                 });
 
-
             console.log('Données envoyées:', selectedData);
 
             try {
@@ -175,11 +175,25 @@ export default {
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
             this.$router.push({ path: '/history', query: { userID: this.userID } });
+        },
+        handleOptionChange(optionName) {
+            if (optionName === 'bruteForceWifi') {
+                if (this.selectedOptions.includes(optionName)) {
+                    this.selectedOptions = [optionName];
+                }
+            } else {
+                this.selectedOptions = this.selectedOptions.filter(option => option !== 'bruteForceWifi');
+            }
+        },
+        isOptionDisabled(optionName) {
+            return this.selectedOptions.includes('bruteForceWifi') && optionName !== 'bruteForceWifi';
+        },
+        isWifiOptionGrayedOut(optionName) {
+            return optionName === 'bruteForceWifi' && this.selectedOptions.length > 0 && !this.selectedOptions.includes('bruteForceWifi');
         }
     }
 };
 </script>
-
 
 <style scoped>
 /* Styles généraux */
@@ -471,5 +485,18 @@ export default {
 .btn-pop-up:hover {
     background: #444;
     transform: scale(1.05);
+}
+
+/* Style pour les options désactivées */
+.disabled-option {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Style pour griser la case Wifi */
+.grayed-out {
+    opacity: 0.5;
+    pointer-events: none;
+    background: #777;
 }
 </style>

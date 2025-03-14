@@ -25,7 +25,7 @@ export default {
       password: '',
       confirmPassword: '',
       userID: '',
-      api_url: ''
+      api_url: 'http://192.168.2.111:8090'
     };
   },
   methods: {
@@ -46,16 +46,25 @@ export default {
         // Obtenir la date et l'heure actuelles
         const currentDateTime = new Date().toISOString();
 
-        const response = await fetch(`${this.api_url}/register`, {
+        console.log("browser : " + simplifiedBrowser)
+
+        console.log("Données envoyées:", JSON.stringify({
+          email: this.email,
+          password: this.password,
+          platform: simplifiedBrowser,
+          login_time: currentDateTime
+        }));
+
+        const response = await fetch(`${this.api_url}/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             email: this.email,
-            password: this.password,
-            browser: simplifiedBrowser,
-            datetime: currentDateTime
+            password: this.password/*,
+            platform: simplifiedBrowser,
+            login_time: currentDateTime*/
           })
         });
 
@@ -66,7 +75,7 @@ export default {
           throw new Error(data.message || 'Une erreur est survenue');
         }
 
-        this.userID = data.userId;
+        this.userID = data.UUID;
         console.log('Inscription réussie:', data);
         this.$router.push({ path: '/home', query: { userID: this.userID } });
       } catch (error) {
