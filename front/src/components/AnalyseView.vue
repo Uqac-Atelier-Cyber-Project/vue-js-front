@@ -84,7 +84,7 @@ export default {
             showNotifications: false,
             notifications: this.$route.query.notification || [],
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL,
+            api_url: 'http://192.168.2.111:8090',
             showPasswordPopup: false,
             password: '',
             confirmPassword: ''
@@ -138,21 +138,21 @@ export default {
             console.log('Données envoyées:', selectedData);
 
             try {
-                /*const response = await fetch(`${this.api_url}/submit-options`, {
+                const response = await fetch(`${this.api_url}/report/submitOptions`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID,
-                        data: selectedData,
+                        userId: this.userID,
+                        options: selectedData,
                         password: this.password
                     })
                 });
 
                 if (!response.ok) {
                     throw new Error('Erreur lors de l\'envoi des options sélectionnées');
-                }*/
+                }
 
                 console.log('Options envoyées avec succès');
                 this.showPasswordPopup = false;
