@@ -25,7 +25,7 @@ export default {
       password: '',
       confirmPassword: '',
       userID: '',
-      api_url: 'http://192.168.2.111:8090'
+      api_url: 'http://localhost:8090'
     };
   },
   methods: {
@@ -62,9 +62,9 @@ export default {
           },
           body: JSON.stringify({
             email: this.email,
-            password: this.password/*,
+            password: this.password,
             platform: simplifiedBrowser,
-            login_time: currentDateTime*/
+            login_time: currentDateTime
           })
         });
 

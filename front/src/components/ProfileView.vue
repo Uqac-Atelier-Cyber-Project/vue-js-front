@@ -72,7 +72,7 @@ export default {
             confirmPassword: '',
             connectionHistory: [],
             intervalId: null,
-            api_url: 'http://192.168.2.111:8090'
+            api_url: 'http://localhost:8090'
         };
     },
     mounted() {

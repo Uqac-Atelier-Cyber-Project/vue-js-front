@@ -24,7 +24,7 @@ export default {
       password: '',
       userID: '',
       loginError: "Mail ou mot de passe incorrect",
-      api_url: 'http://192.168.2.111:8090'
+      api_url: 'http://localhost:8090'
     };
   },
   methods: {
@@ -51,8 +51,7 @@ export default {
             email: this.email,
             password: this.password,
             platform: simplifiedBrowser,
-            login_time: currentDateTime,
-            location: "Canada"
+            login_time: currentDateTime
           })
         });
 

@@ -84,7 +84,7 @@ export default {
             showNotifications: false,
             notifications: this.$route.query.notification || [],
             intervalId: null,
-            api_url: 'http://192.168.2.111:8090',
+            api_url: 'http://localhost:8090',
             showPasswordPopup: false,
             password: '',
             confirmPassword: ''
@@ -115,25 +115,11 @@ export default {
                 return;
             }
 
-            const selectedData = this.options
-                .filter(opt => this.selectedOptions.includes(opt.name))
-                .map(opt => {
-                    const data = { name: opt.name };
-
-                    if (opt.ip !== undefined) {
-                        data.ip = opt.ip;
-                    }
-
-                    if (opt.essid !== undefined) {
-                        data.essid = opt.essid;
-                    }
-
-                    if (opt.port !== undefined) {
-                        data.port = opt.port;
-                    }
-
-                    return data;
-                });
+            // Construction du tableau `options` attendu par le serveur
+            const selectedData = this.options.map(opt => ({
+                value: this.selectedOptions.includes(opt.name), // true si sélectionné, false sinon
+                option1: opt.ip || opt.port || opt.essid || null
+            }));
 
             console.log('Données envoyées:', selectedData);
 
@@ -146,21 +132,22 @@ export default {
                     body: JSON.stringify({
                         userId: this.userID,
                         options: selectedData,
-                        password: this.password
+                        pdfPassword: this.password
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Erreur lors de l\'envoi des options sélectionnées');
+                    throw new Error("Erreur lors de l'envoi des options sélectionnées");
                 }
 
-                console.log('Options envoyées avec succès');
+                console.log("Options envoyées avec succès");
                 this.showPasswordPopup = false;
                 this.goBack();
             } catch (error) {
-                console.error('Erreur lors de l\'envoi des options sélectionnées:', error);
+                console.error("Erreur lors de l'envoi des options sélectionnées:", error);
             }
         },
+
         goBack() {
             console.log('Home');
             this.$router.push({ path: '/home', query: { userID: this.userID } });
