@@ -37,8 +37,6 @@
                             placeholder="Entrez l'ESSID" /></label>
                     <label v-if="option.ip !== undefined">IP : <input type="text" v-model="option.ip"
                             placeholder="Entrez l'IP" /></label>
-                    <label v-if="option.port !== undefined">Port : <input type="number" v-model="option.port"
-                            placeholder="Entrez le port" /></label>
                 </div>
             </div>
         </div>
@@ -75,10 +73,10 @@ export default {
         return {
             userID: this.$route.query.userID,
             options: [
-                { name: 'bruteForceWifi', label: 'Brute Force Wifi', essid: '' },
-                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '' },
                 { name: 'scanPort', label: 'Scan de port', ip: '' },
-                { name: 'detectionCVE', label: 'Détection CVE', ip: '', port: '' }
+                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '' },
+                { name: 'bruteForceWifi', label: 'Brute Force Wifi', essid: '' },
+                { name: 'detectionCVE', label: 'Détection CVE', ip: ''}
             ],
             selectedOptions: [],
             showNotifications: false,
@@ -132,7 +130,7 @@ export default {
             // Construction du tableau `options` attendu par le serveur
             const selectedData = this.options.map(opt => ({
                 value: this.selectedOptions.includes(opt.name), // true si sélectionné, false sinon
-                option1: opt.ip || opt.port || opt.essid || null
+                option1: opt.ip|| opt.essid || null
             }));
 
             console.log('Données envoyées:', selectedData);

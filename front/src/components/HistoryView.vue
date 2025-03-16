@@ -30,8 +30,8 @@
                 <h2>Historique des rapports</h2>
                 <ul>
                     <li v-for="(rapport, index) in rapports" :key="index" @click="selectRapport(rapport)"
-                        :class="{ active: selectedRapport === rapport }">
-                        {{ rapport }}
+                        :class="{ active: selectedRapport === rapport[1], read: rapport[3], 'active-display': selectedRapport === rapport[1] }">
+                        {{ rapport[1] }}
                     </li>
                 </ul>
             </div>
@@ -57,6 +57,7 @@ export default {
             notifications: this.$route.query.notification || [],
             showNotifications: false,
             intervalId: null,
+            reportPath: "/pdf/",
             api_url: 'http://localhost:8090'
         };
     },
@@ -80,7 +81,7 @@ export default {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
@@ -92,9 +93,12 @@ export default {
 
         //Simuler la récupération des rapports
         fetchRapports() {
-            this.rapports = ["Questions.pdf", "25_02_2025.pdf","rapport.pdf"];
+            this.rapports = [
+                [1, "Questions.pdf", "encryptedFile1", true],
+                [2, "25_02_2025.pdf", "encryptedFile2", false],
+                [3, "rapport.pdf", "encryptedFile3", true]
+            ];
         },
-
 
         async fetchNotifications() {
             try {
@@ -127,8 +131,15 @@ export default {
         },
 
         async selectRapport(rapport) {
-            this.selectedRapport = rapport;
-            this.pdfPath = `/pdf/${rapport}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+            this.selectedRapport = rapport[1];
+            this.pdfPath = `${this.reportPath}${rapport[1]}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+
+            if(rapport[3]){
+                return {
+                    reportId: rapport[0],
+                    userId: this.userID
+                };
+            }
 
             // Envoyer une notification au serveur indiquant que le PDF a été lu
             try {
@@ -139,12 +150,20 @@ export default {
                     },
                     body: JSON.stringify({
                         userID: this.userID,
-                        report: rapport
+                        reportId: rapport[0]
                     })
                 });
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la notification de lecture:', error);
             }
+
+            rapport[3] = true;
+
+            // Retourner l'ID du rapport et l'ID de l'utilisateur
+            return {
+                reportId: rapport[0],
+                userId: this.userID
+            };
         },
 
         goBack() {
@@ -317,6 +336,16 @@ export default {
     font-size: 20px;
     /* Augmenter la taille de la police */
     transition: background 0.3s;
+}
+
+.history li.read {
+    background-color: #f0f0f0;
+    color: #888;
+}
+
+.history li.active-display {
+    background-color: #ddd;
+    color: #555;
 }
 
 .history li:hover,
