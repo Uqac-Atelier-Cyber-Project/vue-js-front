@@ -98,8 +98,22 @@ export default {
         this.stopNotificationCheck();
     },
     methods: {
-        fetchNotifications() {
-            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
+        async fetchNotifications() {
+            try {
+                const response = await fetch(`${this.api_url}/report/report-available`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: this.userID
+                    })
+                });
+                const data = await response.json();
+                this.notifications = data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
         },
         startNotificationCheck() {
             this.intervalId = setInterval(this.fetchNotifications, 30000);

@@ -61,15 +61,15 @@ export default {
         this.stopNotificationCheck();
     },
     methods: {
-        /*async fetchNotifications() {
+        async fetchNotifications() {
             try {
-                const response = await fetch(`${this.api_url}/notifications`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/report/report-available`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
@@ -77,10 +77,6 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des notifications:', error);
             }
-        },*/
-        // Simuler la récupération des notifications
-        fetchNotifications() {
-            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
         },
         startNotificationCheck() {
             this.intervalId = setInterval(this.fetchNotifications, 5000); // Vérifie toutes les 5 secondes
