@@ -154,9 +154,9 @@ export default {
 
                 console.log("Options envoyées avec succès");
                 this.showPasswordPopup = false;
-                this.goBack();
             } catch (error) {
                 console.error("Erreur lors de l'envoi des options sélectionnées:", error);
+                this.goBack();
             }
         },
 

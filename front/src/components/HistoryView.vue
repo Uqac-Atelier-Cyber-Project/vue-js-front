@@ -166,7 +166,6 @@ export default {
             this.$router.push({ path: '/profile', query: { userID: this.userID } });
         },
         handleNotificationClick() {
-            console.log('Supprimer la notification');
         }
     }
 };
