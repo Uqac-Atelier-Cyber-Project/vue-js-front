@@ -30,8 +30,8 @@
                 <h2>Historique des rapports</h2>
                 <ul>
                     <li v-for="(rapport, index) in rapports" :key="index" @click="selectRapport(rapport)"
-                        :class="{ active: selectedRapport === rapport }">
-                        {{ rapport }}
+                        :class="{ active: selectedRapport === rapport.reportName, read: rapport.read, 'active-display': selectedRapport === rapport.reportName}">
+                        {{ rapport.reportName }}
                     </li>
                 </ul>
             </div>
@@ -57,6 +57,7 @@ export default {
             notifications: this.$route.query.notification || [],
             showNotifications: false,
             intervalId: null,
+            reportPath: "/pdf/",
             api_url: 'http://localhost:8090'
         };
     },
@@ -72,39 +73,33 @@ export default {
         this.stopNotificationCheck();
     },
     methods: {
-        /*async fetchRapports() {
+        async fetchRapports() {
             try {
-                const response = await fetch(`${this.api_url}/rapports`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/report/UserReports`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
-                this.rapports = data;
+                this.rapports = data.reports;
             } catch (error) {
                 console.error('Erreur lors de la récupération des rapports:', error);
             }
-        },*/
-
-        //Simuler la récupération des rapports
-        fetchRapports() {
-            this.rapports = ["Questions.pdf", "25_02_2025.pdf","rapport.pdf"];
         },
 
-
-        /*async fetchNotifications() {
+        async fetchNotifications() {
             try {
-                const response = await fetch(`${this.api_url}/notifications`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/report/report-available`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
@@ -112,11 +107,6 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des notifications:', error);
             }
-        },*/
-
-        //Simuler la récupération des notifications
-        fetchNotifications() {
-            this.notifications = ['Notification 1', 'Notification 2', 'Notification 3'];
         },
 
         startNotificationCheck() {
@@ -132,24 +122,39 @@ export default {
         },
 
         async selectRapport(rapport) {
-            this.selectedRapport = rapport;
-            this.pdfPath = `/pdf/${rapport}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+            this.selectedRapport = rapport.reportName;
+            this.pdfPath = `${this.reportPath}${rapport.reportName}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+
+            if(rapport.read){
+                return {
+                    reportId: rapport.reportId,
+                    userId: this.userID
+                };
+            }
 
             // Envoyer une notification au serveur indiquant que le PDF a été lu
             try {
-                await fetch(`${this.api_url}/report-read`, {
+                await fetch(`${this.api_url}/report/report-read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID,
-                        report: rapport
+                        userId: this.userID,
+                        reportId: rapport.reportId
                     })
                 });
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la notification de lecture:', error);
             }
+
+            rapport.read = true;
+
+            // Retourner l'ID du rapport et l'ID de l'utilisateur
+            return {
+                reportId: rapport.reportId,
+                userId: this.userID
+            };
         },
 
         goBack() {
@@ -322,6 +327,16 @@ export default {
     font-size: 20px;
     /* Augmenter la taille de la police */
     transition: background 0.3s;
+}
+
+.history li.read {
+    background-color: #f0f0f0;
+    color: #888;
+}
+
+.history li.active-display {
+    background-color: #ddd;
+    color: #555;
 }
 
 .history li:hover,
