@@ -57,7 +57,7 @@ export default {
             notifications: this.$route.query.notification || [],
             showNotifications: false,
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL
+            api_url: 'http://localhost:8090'
         };
     },
     mounted() {
@@ -92,7 +92,7 @@ export default {
 
         //Simuler la récupération des rapports
         fetchRapports() {
-            this.rapports = ["Questions.pdf", "25_02_2025.pdf",];
+            this.rapports = ["Questions.pdf", "25_02_2025.pdf","rapport.pdf"];
         },
 
 

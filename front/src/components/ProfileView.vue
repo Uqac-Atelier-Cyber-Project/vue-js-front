@@ -48,7 +48,7 @@
             <div class="history-section">
                 <h2>Historique de Connexion</h2>
                 <ul>
-                    <li v-for="(connection, index) in connectionHistory" :key="index">
+                    <li v-for="(connection, index) in connectionHistory.loginHistories" :key="index">
                         {{ formatConnection(connection) }}
                     </li>
                 </ul>
@@ -72,7 +72,7 @@ export default {
             confirmPassword: '',
             connectionHistory: [],
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL
+            api_url: 'http://localhost:8090'
         };
     },
     mounted() {
@@ -121,47 +121,45 @@ export default {
 
 
         // Récupération de l'historique de connexion
-        /*async fetchConnectionHistory() {
+        async fetchConnectionHistory() {
             try {
-                const response = await fetch(`${this.api_url}/connection-history`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/auth/connectionHistory`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        user: this.userID
                     })
                 });
                 const data = await response.json();
                 this.connectionHistory = data;
+                console.log(this.connectionHistory)
             } catch (error) {
                 console.error('Erreur lors de la récupération de l\'historique de connexion:', error);
             }
-        },*/
-        // Simuler la récupération de l'historique de connexion
-        fetchConnectionHistory() {
-            this.connectionHistory = [
-                { date: '2023-10-01', time: '14:30', device: 'Firefox for Linux' },
-                { date: '2023-09-25', time: '10:15', device: 'Chrome for Android' },
-                { date: '2023-09-20', time: '08:45', device: 'Safari for iOS' }
-            ];
         },
 
         formatConnection(connection) {
-            return `Connexion le ${connection.date} à ${connection.time} via ${connection.device}.`;
+            console.log(connection)
+            const dateObj = new Date(connection.loginTime);
+            const formattedDate = dateObj.toLocaleDateString('fr-FR');
+            const formattedTime = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); // Format: 19:29
+
+            return `Connexion le ${formattedDate} à ${formattedTime} sur ${connection.platform}.`;
         },
 
 
         // Récupération du mail de l'utilisateur
-        /*async fetchUserData() {
+        async fetchUserData() {
             try {
-                const response = await fetch(`${this.api_url}/user-data`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/auth/userData`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID
+                        userId: this.userID
                     })
                 });
                 const data = await response.json();
@@ -169,10 +167,7 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des données utilisateur:', error);
             }
-        },*/
-
-        // Simuler la récupération des données utilisateur
-        fetchUserData() { this.user.email = 'mail@exemple.com'; },
+        },
 
         // Update des données d'utilisateur
         async updateProfile() {
@@ -181,12 +176,13 @@ export default {
                 return;
             }
             try {
-                const response = await fetch(`${this.api_url}/update-profile`, {
+                const response = await fetch(`${this.api_url}/auth/updateProfile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        userId: this.userID,
                         email: this.user.email,
                         password: this.user.password
                     })

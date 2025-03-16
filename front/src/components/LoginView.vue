@@ -24,7 +24,7 @@ export default {
       password: '',
       userID: '',
       loginError: "Mail ou mot de passe incorrect",
-      api_url: process.env.VUE_APP_API_URL
+      api_url: 'http://localhost:8090'
     };
   },
   methods: {
@@ -33,14 +33,25 @@ export default {
         console.log('Tentative de connexion...');
         console.log(this.email);
 
-        /*const response = await fetch(`${this.api_url}/users/login`, {
+        // Obtenir les informations du navigateur
+        const userAgent = navigator.userAgent;
+        const simplifiedBrowser = this.getSimplifiedBrowserInfo(userAgent);
+
+        // Obtenir la date et l'heure actuelles
+        const currentDateTime = new Date().toISOString();
+
+        console.log("browser : " + simplifiedBrowser)
+
+        const response = await fetch(`${this.api_url}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             email: this.email,
-            password: this.password
+            password: this.password,
+            platform: simplifiedBrowser,
+            login_time: currentDateTime
           })
         });
 
@@ -52,12 +63,46 @@ export default {
         }
 
         this.userID = data.userId;
-        console.log('Connexion réussie:', data);*/
+        console.log('Connexion réussie:', data);
         this.$router.push({ path: '/home', query: { userID: this.userID } });
       } catch (error) {
         alert(`Erreur : ${error.message}`);
         console.error('Erreur lors de la connexion:', error.message);
       }
+    },
+    getSimplifiedBrowserInfo(userAgent) {
+      let browserName = 'Unknown';
+      let osName = 'Unknown';
+
+      if (userAgent.indexOf('Firefox') > -1) {
+        browserName = 'Firefox';
+      } else if (userAgent.indexOf('Chrome') > -1) {
+        browserName = 'Chrome';
+      } else if (userAgent.indexOf('Safari') > -1) {
+        browserName = 'Safari';
+      } else if (userAgent.indexOf('Opera') > -1 || userAgent.indexOf('OPR') > -1) {
+        browserName = 'Opera';
+      } else if (userAgent.indexOf('Trident') > -1) {
+        browserName = 'Internet Explorer';
+      } else if (userAgent.indexOf('Edg') > -1) {
+        browserName = 'Edge';
+      }
+
+      if (userAgent.indexOf('Windows NT 10.0') > -1) {
+        osName = 'Windows';
+      } else if (userAgent.indexOf('Windows NT 6.1') > -1) {
+        osName = 'Windows 7';
+      } else if (userAgent.indexOf('Mac OS X') > -1) {
+        osName = 'MacOS';
+      } else if (userAgent.indexOf('Linux') > -1) {
+        osName = 'Linux';
+      } else if (userAgent.indexOf('Android') > -1) {
+        osName = 'Android';
+      } else if (userAgent.indexOf('iPhone') > -1 || userAgent.indexOf('iPad') > -1) {
+        osName = 'iOS';
+      }
+
+      return `${browserName} for ${osName}`;
     }
   }
 };

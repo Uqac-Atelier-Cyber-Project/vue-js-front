@@ -48,7 +48,7 @@ export default {
             showNotifications: false,
             notifications: this.$route.query.notification || [],
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL
+            api_url: 'http://localhost:8090'
         };
     },
     mounted() {

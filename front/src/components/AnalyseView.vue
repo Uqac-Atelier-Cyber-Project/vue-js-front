@@ -25,14 +25,20 @@
 
         <!-- Contenu principal -->
         <div class="content">
-            <div v-for="(option, index) in options" :key="index" class="option">
+            <div v-for="(option, index) in options" :key="index" class="option"
+                :class="{ 'disabled-option': isOptionDisabled(option.name), 'grayed-out': isWifiOptionGrayedOut(option.name) }">
                 <label>
-                    <input type="checkbox" v-model="selectedOptions" :value="option.name" class="option-txt" />
+                    <input type="checkbox" v-model="selectedOptions" :value="option.name" class="option-txt"
+                        :disabled="isOptionDisabled(option.name)" @change="handleOptionChange(option.name)" />
                     {{ option.label }}
                 </label>
                 <div v-if="selectedOptions.includes(option.name)" class="details">
-                    <label>IP : <input type="text" v-model="option.ip" placeholder="Entrez l'IP" /></label>
-                    <label>Port : <input type="number" v-model="option.port" placeholder="Entrez le port" /></label>
+                    <label v-if="option.essid !== undefined">ESSID : <input type="text" v-model="option.essid"
+                            placeholder="Entrez l'ESSID" /></label>
+                    <label v-if="option.ip !== undefined">IP : <input type="text" v-model="option.ip"
+                            placeholder="Entrez l'IP" /></label>
+                    <label v-if="option.port !== undefined">Port : <input type="number" v-model="option.port"
+                            placeholder="Entrez le port" /></label>
                 </div>
             </div>
         </div>
@@ -69,16 +75,16 @@ export default {
         return {
             userID: this.$route.query.userID,
             options: [
-                { name: 'bruteForceWifi', label: 'Brute Force Wifi', ip: '', port: '' },
-                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '', port: '' },
-                { name: 'scanPort', label: 'Scan de port', ip: '', port: '' },
+                { name: 'bruteForceWifi', label: 'Brute Force Wifi', essid: '' },
+                { name: 'bruteForceSSH', label: 'Brute Force SSH', ip: '' },
+                { name: 'scanPort', label: 'Scan de port', ip: '' },
                 { name: 'detectionCVE', label: 'Détection CVE', ip: '', port: '' }
             ],
             selectedOptions: [],
             showNotifications: false,
             notifications: this.$route.query.notification || [],
             intervalId: null,
-            api_url: process.env.VUE_APP_API_URL,
+            api_url: 'http://localhost:8090',
             showPasswordPopup: false,
             password: '',
             confirmPassword: ''
@@ -109,39 +115,39 @@ export default {
                 return;
             }
 
-            const selectedData = this.options
-                .filter(opt => this.selectedOptions.includes(opt.name))
-                .map(opt => ({
-                    name: opt.name,
-                    ip: opt.ip,
-                    port: opt.port
-                }));
+            // Construction du tableau `options` attendu par le serveur
+            const selectedData = this.options.map(opt => ({
+                value: this.selectedOptions.includes(opt.name), // true si sélectionné, false sinon
+                option1: opt.ip || opt.port || opt.essid || null
+            }));
 
             console.log('Données envoyées:', selectedData);
 
             try {
-                const response = await fetch(`${this.api_url}/submit-options`, {
+                const response = await fetch(`${this.api_url}/report/submitOptions`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID,
-                        data: selectedData,
-                        password: this.password
+                        userId: this.userID,
+                        options: selectedData,
+                        pdfPassword: this.password
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Erreur lors de l\'envoi des options sélectionnées');
+                    throw new Error("Erreur lors de l'envoi des options sélectionnées");
                 }
 
-                console.log('Options envoyées avec succès');
+                console.log("Options envoyées avec succès");
                 this.showPasswordPopup = false;
+                this.goBack();
             } catch (error) {
-                console.error('Erreur lors de l\'envoi des options sélectionnées:', error);
+                console.error("Erreur lors de l'envoi des options sélectionnées:", error);
             }
         },
+
         goBack() {
             console.log('Home');
             this.$router.push({ path: '/home', query: { userID: this.userID } });
@@ -156,6 +162,21 @@ export default {
         handleNotificationClick() {
             console.log('Redirection vers History via Notification');
             this.$router.push({ path: '/history', query: { userID: this.userID } });
+        },
+        handleOptionChange(optionName) {
+            if (optionName === 'bruteForceWifi') {
+                if (this.selectedOptions.includes(optionName)) {
+                    this.selectedOptions = [optionName];
+                }
+            } else {
+                this.selectedOptions = this.selectedOptions.filter(option => option !== 'bruteForceWifi');
+            }
+        },
+        isOptionDisabled(optionName) {
+            return this.selectedOptions.includes('bruteForceWifi') && optionName !== 'bruteForceWifi';
+        },
+        isWifiOptionGrayedOut(optionName) {
+            return optionName === 'bruteForceWifi' && this.selectedOptions.length > 0 && !this.selectedOptions.includes('bruteForceWifi');
         }
     }
 };
@@ -453,4 +474,16 @@ export default {
     transform: scale(1.05);
 }
 
+/* Style pour les options désactivées */
+.disabled-option {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Style pour griser la case Wifi */
+.grayed-out {
+    opacity: 0.5;
+    pointer-events: none;
+    background: #777;
+}
 </style>
