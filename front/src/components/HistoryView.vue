@@ -30,8 +30,8 @@
                 <h2>Historique des rapports</h2>
                 <ul>
                     <li v-for="(rapport, index) in rapports" :key="index" @click="selectRapport(rapport)"
-                        :class="{ active: selectedRapport === rapport[1], read: rapport[3], 'active-display': selectedRapport === rapport[1] }">
-                        {{ rapport[1] }}
+                        :class="{ active: selectedRapport === rapport.reportName, read: rapport.read, 'active-display': selectedRapport === rapport.reportName}">
+                        {{ rapport.reportName }}
                     </li>
                 </ul>
             </div>
@@ -73,10 +73,10 @@ export default {
         this.stopNotificationCheck();
     },
     methods: {
-        /*async fetchRapports() {
+        async fetchRapports() {
             try {
-                const response = await fetch(`${this.api_url}/rapports`, {
-                    method: 'GET',
+                const response = await fetch(`${this.api_url}/report/UserReports`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -85,19 +85,10 @@ export default {
                     })
                 });
                 const data = await response.json();
-                this.rapports = data;
+                this.rapports = data.reports;
             } catch (error) {
                 console.error('Erreur lors de la récupération des rapports:', error);
             }
-        },*/
-
-        //Simuler la récupération des rapports
-        fetchRapports() {
-            this.rapports = [
-                [1, "Questions.pdf", "encryptedFile1", true],
-                [2, "25_02_2025.pdf", "encryptedFile2", false],
-                [3, "rapport.pdf", "encryptedFile3", true]
-            ];
         },
 
         async fetchNotifications() {
@@ -131,37 +122,37 @@ export default {
         },
 
         async selectRapport(rapport) {
-            this.selectedRapport = rapport[1];
-            this.pdfPath = `${this.reportPath}${rapport[1]}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+            this.selectedRapport = rapport.reportName;
+            this.pdfPath = `${this.reportPath}${rapport.reportName}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
 
-            if(rapport[3]){
+            if(rapport.read){
                 return {
-                    reportId: rapport[0],
+                    reportId: rapport.reportId,
                     userId: this.userID
                 };
             }
 
             // Envoyer une notification au serveur indiquant que le PDF a été lu
             try {
-                await fetch(`${this.api_url}/report-read`, {
+                await fetch(`${this.api_url}/report/report-read`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        userID: this.userID,
-                        reportId: rapport[0]
+                        userId: this.userID,
+                        reportId: rapport.reportId
                     })
                 });
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la notification de lecture:', error);
             }
 
-            rapport[3] = true;
+            rapport.read = true;
 
             // Retourner l'ID du rapport et l'ID de l'utilisateur
             return {
-                reportId: rapport[0],
+                reportId: rapport.reportId,
                 userId: this.userID
             };
         },
