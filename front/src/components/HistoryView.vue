@@ -92,7 +92,7 @@ export default {
 
         //Simuler la récupération des rapports
         fetchRapports() {
-            this.rapports = ["Questions.pdf", "25_02_2025.pdf",];
+            this.rapports = ["Questions.pdf", "25_02_2025.pdf","rapport.pdf"];
         },
 
 
