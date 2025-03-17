@@ -123,7 +123,8 @@ export default {
 
         async selectRapport(rapport) {
             this.selectedRapport = rapport.reportName;
-            this.pdfPath = `${this.reportPath}${rapport.reportName}`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
+            console.log(rapport.reportName);
+            this.pdfPath = `${this.reportPath}${rapport.reportName}.pdf`; // Assurez-vous que les fichiers PDF sont dans "public/pdfs/"
 
             if(rapport.read){
                 return {
