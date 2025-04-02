@@ -25,7 +25,7 @@ export default {
       password: '',
       confirmPassword: '',
       userID: '',
-      api_url: 'http://localhost:8090'
+      api_url: process.env.VUE_APP_API
     };
   },
   methods: {

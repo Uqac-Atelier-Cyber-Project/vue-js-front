@@ -58,7 +58,7 @@ export default {
             showNotifications: false,
             intervalId: null,
             reportPath: "/pdf/",
-            api_url: 'http://localhost:8090'
+            api_url: process.env.VUE_APP_API
         };
     },
     mounted() {
