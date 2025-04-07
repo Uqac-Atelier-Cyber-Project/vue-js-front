@@ -1,23 +1,23 @@
-# Utiliser une image de base Node.js
-FROM node:14
+FROM node:14-alpine
 
-# Définir le répertoire de travail
+# Dossier de travail
 WORKDIR /app
 
-# Copier le package.json et le package-lock.json
+# Copier les fichiers et installer les dépendances
 COPY package*.json ./
-
-# Installer les dépendances
 RUN npm install
 
-# Copier le reste de l'application
+# Copier le reste de l'app
 COPY . .
 
-# Construire l'application Vue.js
+# Construire l'application Vue.js (mode prod)
 RUN npm run build
+
+# Installer http-server pour servir /dist
+RUN npm install -g http-server
 
 # Exposer le port 8080
 EXPOSE 8080
 
-# Commande pour démarrer l'application
-CMD ["npm", "run", "serve"]
+# Commande de lancement
+CMD ["http-server", "dist", "-p", "8080"]
