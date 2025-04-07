@@ -1,23 +1,20 @@
-FROM node:14-alpine
+# Dockerfile (frontend/Dockerfile)
+# 1. Utilise une image Node pour construire l'app Vue.js
+FROM node:22 AS build-stage
 
-# Dossier de travail
 WORKDIR /app
-
-# Copier les fichiers et installer les dépendances
 COPY package*.json ./
 RUN npm install
-
-# Copier le reste de l'app
 COPY . .
 
-# Construire l'application Vue.js (mode prod)
+# 2. Construction du projet pour production
 RUN npm run build
 
-# Installer http-server pour servir /dist
-RUN npm install -g http-server
-
-# Exposer le port 8080
-EXPOSE 8080
-
-# Commande de lancement
-CMD ["http-server", "dist", "-p", "8080"]
+# 3. Utilise une image nginx pour servir les fichiers statiques
+FROM nginx:stable-alpine AS production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+# Copy the Nginx configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+# Expose le port 80 pour le serveur nginx
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
