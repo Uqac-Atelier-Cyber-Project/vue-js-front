@@ -24,7 +24,7 @@ export default {
       password: '',
       userID: '',
       loginError: "Mail ou mot de passe incorrect",
-      api_url: process.env.VUE_APP_API
+      api_url: window.__ENV__?.API_URL || 'http://localhost:3000/api'
     };
   },
   methods: {
